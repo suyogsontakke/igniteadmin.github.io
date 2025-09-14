@@ -34,7 +34,6 @@
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         .modal-fade-in { animation: fadeIn 0.3s ease-out forwards; }
         
-        /* --- TICKET STYLES (DARK THEME) --- */
         .movie-ticket {
             font-family: 'Bebas Neue', cursive; 
             background-color: #1F2937;
@@ -44,14 +43,11 @@
             box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
         }
         .ticket-main { 
-            width: 70%; 
             padding: 1.5rem; 
-            border-right: 2px dashed #4B5563; 
             text-align: left; 
         }
         .ticket-stub {
-            width: 30%; 
-            padding: 0.5rem; 
+            padding: 1rem;
             gap: 0.5rem; 
             display: flex; 
             flex-direction: column;
@@ -62,14 +58,14 @@
             flex-shrink: 0; 
             background-color: #374151;
         }
+        
         #modalQrCodeCanvas {
-            max-width: 100%;
-            height: auto !important;
             display: block;
             background-color: white;
             padding: 5px;
             border-radius: 4px;
         }
+
         .ticket-stub::before, .ticket-stub::after {
             content: ''; 
             position: absolute; 
@@ -82,6 +78,13 @@
         .ticket-stub::before { top: -11px; } 
         .ticket-stub::after { bottom: -11px; }
 
+        /* Hide punch-hole effect on mobile where it doesn't make sense */
+        @media (max-width: 639px) {
+            .ticket-stub::before, .ticket-stub::after {
+                display: none;
+            }
+        }
+
         .receipt-container {
             font-family: 'Inter', sans-serif; 
             background-color: #ffffff; 
@@ -92,6 +95,10 @@
         }
         .stat-card-active {
             box-shadow: 0 0 0 2px var(--primary-red);
+        }
+        .filter-btn-active { 
+            background-color: var(--primary-red); 
+            color: white; 
         }
     </style>
 </head>
@@ -126,7 +133,7 @@
         <main>
             <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div id="totalRegistrationsCard" class="p-6 rounded-lg shadow-md cursor-pointer bg-bg-light transition-shadow hover:shadow-xl stat-card-active">
+                    <div id="totalRegistrationsCard" class="p-6 rounded-lg shadow-md cursor-pointer bg-bg-light transition-shadow hover:shadow-xl">
                         <h3 class="text-lg font-medium leading-6 text-text-secondary">Total Registrations</h3>
                         <p id="totalRegistrations" class="mt-2 text-5xl font-bold text-red-500">0</p>
                     </div>
@@ -137,21 +144,27 @@
                 </div>
 
                 <div class="shadow-md sm:rounded-lg bg-bg-light">
-                    <div class="px-4 py-5 border-b sm:px-6 border-slate/50">
-                        <h3 id="attendeeListTitle" class="text-lg font-medium leading-6 text-text-primary">All Attendees</h3>
-                        <p class="max-w-2xl mt-1 text-sm text-text-secondary">A real-time list of all registered attendees.</p>
+                    <div class="px-4 py-5 border-b sm:px-6 border-slate-800">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                            <div>
+                                <h3 id="attendeeListTitle" class="text-lg font-medium leading-6 text-text-primary">All Attendees</h3>
+                                <p class="max-w-2xl mt-1 text-sm text-text-secondary">A real-time list of registered attendees.</p>
+                            </div>
+                            <div class="flex items-center gap-2 mt-4 sm:mt-0 p-1 bg-bg-dark rounded-lg">
+                                <button id="filterAllBtn" class="px-3 py-1 text-sm font-semibold rounded-md filter-btn-active">All</button>
+                                <button id="filterOnlineBtn" class="px-3 py-1 text-sm font-semibold rounded-md text-text-secondary hover:bg-gray-700">Online</button>
+                                <button id="filterCashBtn" class="px-3 py-1 text-sm font-semibold rounded-md text-text-secondary hover:bg-gray-700">Cash</button>
+                            </div>
+                        </div>
                     </div>
                     <div id="attendeeList" class="attendee-list max-h-[65vh] overflow-y-auto">
                         <p id="loadingMessage" class="p-10 text-center text-text-secondary">Loading attendee data...</p>
                     </div>
-                    <div class="flex flex-col gap-4 px-4 py-4 border-t sm:px-6 border-slate/50">
+                    <div class="px-4 py-4 border-t sm:px-6 border-slate-800">
+                        <p class="text-sm font-semibold text-text-primary mb-3">Download Reports</p>
                         <div class="flex flex-col gap-4 sm:flex-row">
-                            <button id="downloadFullLogBtn" class="w-full px-4 py-3 font-bold text-white transition rounded-lg bg-primary-red hover:bg-red-600">Download Full Log (PDF)</button>
-                            <button id="downloadTodayLogBtn" class="w-full px-4 py-3 font-bold text-white transition rounded-lg bg-secondary-orange hover:bg-orange-600">Download Today's Log (PDF)</button>
-                        </div>
-                         <div class="flex flex-col gap-4 sm:flex-row">
-                            <button id="downloadFullLogJpgBtn" class="w-full px-4 py-3 font-bold text-white transition bg-green-600 rounded-lg hover:bg-green-700">Download Full Log (JPG)</button>
-                            <button id="downloadTodayLogJpgBtn" class="w-full px-4 py-3 font-bold text-white transition bg-green-600 rounded-lg hover:bg-green-700">Download Today's Log (JPG)</button>
+                             <button id="downloadLogPdfBtn" class="w-full px-4 py-3 font-bold text-white transition rounded-lg bg-primary-red hover:bg-red-600">Download Current View (PDF)</button>
+                             <button id="downloadLogJpgBtn" class="w-full px-4 py-3 font-bold text-white transition rounded-lg bg-secondary-orange hover:bg-orange-600">Download Current View (JPG)</button>
                         </div>
                     </div>
                 </div>
@@ -163,38 +176,45 @@
         <div class="relative w-full max-w-lg modal-fade-in">
             <button id="closeModalBtn" class="absolute z-10 flex items-center justify-center w-8 h-8 text-white transition bg-red-600 rounded-full shadow-lg -top-3 -right-3 hover:bg-red-700">&times;</button>
             <div id="modalContent" class="p-4 rounded-lg bg-bg-dark max-h-[90vh] overflow-y-auto attendee-list">
-                <div id="ticket-to-download" class="overflow-hidden rounded-lg movie-ticket">
-                     <div class="ticket-main">
-                        <h2 class="text-4xl text-red-500">IGNITE 2025</h2>
-                        <p class="text-lg tracking-widest text-gray-400">ADMIT ONE</p>
-                        <div class="my-4"><p class="text-sm text-gray-400">ATTENDEE</p><p id="modalTicketName" class="text-3xl break-words text-white"></p></div>
-                        <div class="my-4"><p class="text-sm text-gray-400">TICKET TYPE</p><p id="modalTicketTypeDetail" class="text-xl text-white"></p></div>
-                        <p class="text-xs text-gray-500">This ticket is non-transferable.</p>
-                    </div>
-                    <div class="ticket-stub">
-                        <p class="text-xl font-bold text-gray-200">#IGNITE2025</p>
-                        <canvas id="modalQrCodeCanvas"></canvas>
-                        <p id="modalTicketIdStub" class="text-xs text-gray-400 break-all"></p>
-                    </div>
+                
+                <div id="ticket-to-download" class="movie-ticket flex flex-col sm:flex-row rounded-lg overflow-hidden">
+                     <div class="ticket-main w-full sm:w-[70%] border-b-2 sm:border-b-0 sm:border-r-2 border-dashed border-gray-700">
+                         <h2 class="text-3xl sm:text-4xl text-red-500">IGNITE 2025</h2>
+                         <p class="text-base sm:text-lg tracking-widest text-gray-400">ADMIT ONE</p>
+                         <div class="my-2 sm:my-4">
+                             <p class="text-xs sm:text-sm text-gray-400">ATTENDEE</p>
+                             <p id="modalTicketName" class="text-2xl sm:text-3xl break-words text-white"></p>
+                         </div>
+                         <div class="my-2 sm:my-4">
+                            <p class="text-xs sm:text-sm text-gray-400">TICKET TYPE</p>
+                            <p id="modalTicketTypeDetail" class="text-lg sm:text-xl text-white"></p>
+                        </div>
+                         <p class="text-xs text-gray-500">This ticket is non-transferable.</p>
+                     </div>
+                     <div class="ticket-stub w-full sm:w-[30%]">
+                         <p class="text-lg sm:text-xl font-bold text-gray-200">#IGNITE2025</p>
+                         <canvas id="modalQrCodeCanvas"></canvas>
+                         <p id="modalTicketIdStub" class="text-xs text-gray-400 break-all"></p>
+                     </div>
                 </div>
+                
                 <div id="receipt-to-download" class="mt-4 overflow-hidden rounded-lg receipt-container">
                      <div class="flex items-center justify-between pb-4 mb-4 border-b border-gray-200"><h2 class="text-2xl font-bold text-gray-800">Payment Receipt</h2><span class="text-sm text-gray-500" id="modalReceiptDate"></span></div>
-                    <div class="space-y-4">
-                        <div><p class="text-sm text-gray-500">Billed To:</p><p class="font-semibold" id="modalReceiptName"></p><p class="text-sm" id="modalReceiptEmail"></p></div>
-                        <div><p class="text-sm text-gray-500">Payment ID:</p><p class="font-semibold text-sm" id="modalReceiptPaymentId"></p></div>
-                        <table class="w-full text-left">
-                            <thead><tr class="border-b border-gray-200"><th class="py-2 font-semibold">Description</th><th class="py-2 font-semibold text-right">Amount</th></tr></thead>
-                            <tbody><tr><td class="py-2" id="modalReceiptDescription"></td><td class="py-2 text-right" id="modalReceiptAmount"></td></tr></tbody>
-                            <tfoot><tr class="font-bold border-t-2 border-gray-800"><td class="py-2">Total Paid</td><td class="py-2 text-right" id="modalReceiptTotal"></td></tr></tfoot>
-                        </table>
-                        <div class="pt-4 text-center"><p class="inline-block p-2 text-2xl font-bold text-green-600 border-4 border-green-600 rounded-lg -rotate-12">PAID</p></div>
-                    </div>
+                     <div class="space-y-4">
+                         <div><p class="text-sm text-gray-500">Billed To:</p><p class="font-semibold" id="modalReceiptName"></p><p class="text-sm" id="modalReceiptEmail"></p></div>
+                         <div><p class="text-sm text-gray-500">Payment ID:</p><p class="font-semibold text-sm" id="modalReceiptPaymentId"></p></div>
+                         <table class="w-full text-left">
+                             <thead><tr class="border-b border-gray-200"><th class="py-2 font-semibold">Description</th><th class="py-2 font-semibold text-right">Amount</th></tr></thead>
+                             <tbody><tr><td class="py-2" id="modalReceiptDescription"></td><td class="py-2 text-right" id="modalReceiptAmount"></td></tr></tbody>
+                             <tfoot><tr class="font-bold border-t-2 border-gray-800"><td class="py-2">Total Paid</td><td class="py-2 text-right" id="modalReceiptTotal"></td></tr></tfoot>
+                         </table>
+                         <div class="pt-4 text-center"><p class="inline-block p-2 text-2xl font-bold text-green-600 border-4 border-green-600 rounded-lg -rotate-12">PAID</p></div>
+                     </div>
                 </div>
                  <div class="flex flex-wrap justify-center gap-2 p-3 mt-4 rounded-lg bg-bg-light">
-                    <button id="downloadTicketPngBtn" class="flex-grow px-4 py-3 font-semibold text-white transition rounded-lg bg-red-600 hover:bg-red-700">Download Ticket (JPG)</button>
-                    <button id="downloadReceiptPngBtn" class="flex-grow px-4 py-3 font-semibold text-white transition bg-gray-600 rounded-lg hover:bg-gray-700">Download Receipt (JPG)</button>
+                    <button id="downloadTicketJpgBtn" class="flex-grow px-4 py-3 font-semibold text-white transition rounded-lg bg-red-600 hover:bg-red-700">Download Ticket (JPG)</button>
+                    <button id="downloadReceiptJpgBtn" class="flex-grow px-4 py-3 font-semibold text-white transition bg-gray-600 hover:bg-gray-700">Download Receipt (JPG)</button>
                     <button id="downloadPdfBtn" class="w-full px-4 py-3 mt-2 font-semibold text-white transition rounded-lg bg-orange-600 hover:bg-orange-700">Download Both (PDF)</button>
-                    <button id="downloadJpgBtn" class="w-full px-4 py-3 mt-2 font-semibold text-white transition bg-green-600 rounded-lg hover:bg-green-700">Download Both (JPG)</button>
                 </div>
             </div>
         </div>
@@ -215,41 +235,41 @@
             measurementId: "G-RLPWDK8MR2"
         };
         
-        let db, auth;
+        // --- State Management ---
+        let db;
         let currentAttendee = null;
-        let allAttendees = [];
-        let currentFilter = 'all'; 
+        let onlineAttendees = [], cashAttendees = [], allAttendees = [];
+        let viewFilter = 'all', dateFilter = 'all';
 
-        // UI Elements
-        const loginOverlay = document.getElementById('login-overlay');
-        const loginForm = document.getElementById('login-form');
-        const errorMessage = document.getElementById('error-message');
-        const dashboardContent = document.getElementById('dashboard-content');
-        
-        const attendeeListEl = document.getElementById('attendeeList');
-        const attendeeListTitle = document.getElementById('attendeeListTitle');
-        const totalRegistrationsEl = document.getElementById('totalRegistrations');
-        const todayRegistrationsEl = document.getElementById('todayRegistrations');
-        const totalRegistrationsCard = document.getElementById('totalRegistrationsCard');
-        const todayRegistrationsCard = document.getElementById('todayRegistrationsCard');
-        const loadingMessageEl = document.getElementById('loadingMessage');
-        const attendeeModalEl = document.getElementById('attendeeModal');
-        const closeModalBtn = document.getElementById('closeModalBtn');
-        const downloadTicketPngBtn = document.getElementById('downloadTicketPngBtn');
-        const downloadReceiptPngBtn = document.getElementById('downloadReceiptPngBtn');
-        const downloadPdfBtn = document.getElementById('downloadPdfBtn');
-        const downloadJpgBtn = document.getElementById('downloadJpgBtn');
-        const downloadFullLogBtn = document.getElementById('downloadFullLogBtn');
-        const downloadTodayLogBtn = document.getElementById('downloadTodayLogBtn');
-        const downloadFullLogJpgBtn = document.getElementById('downloadFullLogJpgBtn');
-        const downloadTodayLogJpgBtn = document.getElementById('downloadTodayLogJpgBtn');
+        // --- All UI element declarations ---
+        const loginForm = document.getElementById('login-form'),
+            errorMessage = document.getElementById('error-message'),
+            loginOverlay = document.getElementById('login-overlay'),
+            dashboardContent = document.getElementById('dashboard-content'),
+            attendeeListEl = document.getElementById('attendeeList'),
+            attendeeListTitle = document.getElementById('attendeeListTitle'),
+            totalRegistrationsEl = document.getElementById('totalRegistrations'),
+            todayRegistrationsEl = document.getElementById('todayRegistrations'),
+            totalRegistrationsCard = document.getElementById('totalRegistrationsCard'),
+            todayRegistrationsCard = document.getElementById('todayRegistrationsCard'),
+            loadingMessageEl = document.getElementById('loadingMessage'),
+            attendeeModalEl = document.getElementById('attendeeModal'),
+            closeModalBtn = document.getElementById('closeModalBtn'),
+            downloadTicketJpgBtn = document.getElementById('downloadTicketJpgBtn'),
+            downloadReceiptJpgBtn = document.getElementById('downloadReceiptJpgBtn'),
+            downloadPdfBtn = document.getElementById('downloadPdfBtn'),
+            downloadLogPdfBtn = document.getElementById('downloadLogPdfBtn'),
+            downloadLogJpgBtn = document.getElementById('downloadLogJpgBtn'),
+            filterAllBtn = document.getElementById('filterAllBtn'),
+            filterOnlineBtn = document.getElementById('filterOnlineBtn'),
+            filterCashBtn = document.getElementById('filterCashBtn');
 
-        // --- Password Logic ---
+        // --- PASSWORD LOGIC IS HERE ---
         function handleLogin(e) {
             e.preventDefault();
             const password = e.target.password.value;
-            // --- CHANGE YOUR PASSWORD HERE ---
-            const CORRECT_PASSWORD = "suyog"; 
+            // --- CHANGE YOUR PASSWORD ON THE NEXT LINE ---
+            const CORRECT_PASSWORD = "1234"; 
 
             if (password === CORRECT_PASSWORD) {
                 loginOverlay.style.display = 'none';
@@ -265,106 +285,118 @@
             try {
                 const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
-                auth = getAuth(app);
-                await signInAnonymously(auth);
-                listenForAttendees();
+                await signInAnonymously(getAuth(app));
+                setupListeners();
             } catch (error) {
                 console.error("Firebase Init Error:", error);
-                attendeeListEl.innerHTML = `<p class="p-10 text-center text-red-400 font-semibold">Error: Could not connect to the database.</p>`;
+                attendeeListEl.innerHTML = `<p class="p-10 text-center text-red-400 font-semibold">Error: Could not connect to the database. Check Firebase rules.</p>`;
             }
         }
 
-        function listenForAttendees() {
-            const attendeesCol = collection(db, 'attendees');
-            const q = query(attendeesCol, orderBy('registeredAt', 'desc'));
+        function setupListeners() {
+            const qOnline = query(collection(db, 'attendees'), orderBy('registeredAt', 'desc'));
+            onSnapshot(qOnline, (snapshot) => {
+                onlineAttendees = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), paymentType: 'Online' }));
+                combineAndRender();
+            }, (error) => console.error("Error fetching online attendees:", error));
 
-            onSnapshot(q, (snapshot) => {
-                loadingMessageEl.style.display = 'none';
-                allAttendees = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                applyFilterAndRender();
-            }, (error) => {
-                console.error("Error fetching attendees:", error);
-                loadingMessageEl.style.display = 'none';
-                attendeeListEl.innerHTML = `<p class="p-10 text-center text-red-400">Could not fetch attendee data.</p>`;
-            });
+            const qCash = query(collection(db, 'attendees_cash'), orderBy('registeredAt', 'desc'));
+            onSnapshot(qCash, (snapshot) => {
+                cashAttendees = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), paymentType: 'Cash' }));
+                combineAndRender();
+            }, (error) => console.error("Error fetching cash attendees:", error));
         }
-        
-        function applyFilterAndRender() {
+
+        function combineAndRender() {
+            allAttendees = [...onlineAttendees, ...cashAttendees].sort((a, b) => (b.registeredAt?.toDate() || 0) - (a.registeredAt?.toDate() || 0));
+            updateDashboard();
+        }
+
+        function updateDashboard() {
+            loadingMessageEl.style.display = 'none';
             totalRegistrationsEl.textContent = allAttendees.length;
+
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-            const todayRegistrations = allAttendees.filter(attendee => {
-                return attendee.registeredAt && attendee.registeredAt.toDate() >= today;
-            });
+            const todayRegistrations = allAttendees.filter(a => a.registeredAt && a.registeredAt.toDate() >= today);
             todayRegistrationsEl.textContent = todayRegistrations.length;
 
-            let filteredAttendees = [];
-            if (currentFilter === 'all') {
-                filteredAttendees = allAttendees;
-                attendeeListTitle.textContent = "All Attendees";
-                totalRegistrationsCard.classList.add('stat-card-active');
-                todayRegistrationsCard.classList.remove('stat-card-active');
-            } else { 
-                filteredAttendees = todayRegistrations;
-                attendeeListTitle.textContent = "Attendees Registered Today";
-                totalRegistrationsCard.classList.remove('stat-card-active');
-                todayRegistrationsCard.classList.add('stat-card-active');
+            let baseList = [];
+            if (viewFilter === 'all') {
+                baseList = allAttendees;
+            } else if (viewFilter === 'online') {
+                baseList = onlineAttendees;
+            } else {
+                baseList = cashAttendees;
             }
-            renderAttendeeList(filteredAttendees);
+
+            let attendeesToRender = baseList;
+            const viewTitleMap = {all: 'All Attendees', online: 'Online Payments', cash: 'Cash Payments'};
+            if (dateFilter === 'today') {
+                attendeesToRender = baseList.filter(a => a.registeredAt && a.registeredAt.toDate() >= today);
+                attendeeListTitle.textContent = `Today's Registrations (${viewTitleMap[viewFilter]})`;
+            } else {
+                 attendeeListTitle.textContent = viewTitleMap[viewFilter];
+            }
+
+            renderAttendeeList(attendeesToRender);
         }
 
         function renderAttendeeList(attendees) {
-             if (attendees.length === 0) {
+            if (attendees.length === 0) {
                 attendeeListEl.innerHTML = `<p class="p-10 text-center text-text-secondary">No attendees match the current filter.</p>`;
                 return;
             }
             attendeeListEl.innerHTML = ''; 
             attendees.forEach(attendee => {
-                const registrationDate = attendee.registeredAt 
-                    ? attendee.registeredAt.toDate().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })
-                    : 'N/A';
-                
+                const regDate = attendee.registeredAt ? attendee.registeredAt.toDate().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : 'N/A';
                 const attendeeDiv = document.createElement('div');
-                attendeeDiv.className = "px-4 py-4 sm:px-6 flex justify-between items-center border-b border-slate/50 last:border-b-0 hover:bg-bg-dark/50 transition-colors cursor-pointer";
+                attendeeDiv.className = "px-4 py-4 sm:px-6 flex justify-between items-center border-b border-slate-800 last:border-b-0 hover:bg-bg-dark/50 transition-colors cursor-pointer";
                 attendeeDiv.innerHTML = `
                     <div class="flex-1 min-w-0 pr-4">
                         <p class="font-semibold truncate text-text-primary">${attendee.name ?? 'N/A'}</p>
                         <p class="text-sm truncate text-text-secondary">${attendee.email ?? 'N/A'}</p>
-                        <p class="text-sm truncate text-text-secondary">${attendee.mobile ?? 'N/A'}</p>
-                        <p class="text-xs text-slate-500 truncate">ID: ${attendee.paymentId ?? 'N/A'}</p>
+                        <p class="text-xs text-slate-500 truncate" title="${attendee.id}">Ticket ID: ${attendee.id}</p>
                     </div>
                     <div class="text-right flex-shrink-0">
-                        <p class="px-3 py-1 text-xs font-medium rounded-full ${attendee.ticketType === 'VIP Pass' ? 'bg-yellow-400/20 text-yellow-300' : 'bg-blue-400/20 text-blue-300'}">${attendee.ticketType ?? 'N/A'}</p>
-                        <p class="mt-2 text-xs text-slate-500">${registrationDate}</p>
-                    </div>
-                `;
+                        <p class="px-3 py-1 text-xs font-medium rounded-full ${attendee.paymentType === 'Cash' ? 'bg-green-400/20 text-green-300' : 'bg-blue-400/20 text-blue-300'}">${attendee.paymentType ?? 'N/A'}</p>
+                        <p class="mt-2 text-xs text-slate-500">${regDate}</p>
+                    </div>`;
                 attendeeDiv.addEventListener('click', () => showAttendeeDetails(attendee));
                 attendeeListEl.appendChild(attendeeDiv);
             });
         }
         
+        function generateQrCode(attendeeData) {
+            const canvasElement = document.getElementById('modalQrCodeCanvas');
+            new QRious({
+                element: canvasElement,
+                value: JSON.stringify({ id: attendeeData.id, name: attendeeData.name, email: attendeeData.email }),
+                size: 112,
+                level: 'H',
+                padding: 4,
+                background: 'white',
+                foreground: 'black'
+            });
+        }
+        
         function showAttendeeDetails(attendeeData) {
             currentAttendee = attendeeData;
-            const ticketPrices = { 'General Admission': 79900, 'VIP Pass': 149900 };
-            const ticketTypeFullTexts = { 'General Admission': 'Freshers Pass (₹799)', 'VIP Pass': 'VIP Pass (₹1499)' };
-            const amount = ticketPrices[attendeeData.ticketType] || 0;
-            const ticketTypeFullText = ticketTypeFullTexts[attendeeData.ticketType] || attendeeData.ticketType;
+            const isCash = attendeeData.paymentType === 'Cash';
+            const ticketType = isCash ? 'Freshers Pass (Cash)' : (attendeeData.ticketTypeFullText || 'Freshers Pass (₹799)');
+            const amount = 79900; 
 
             document.getElementById('modalTicketName').textContent = attendeeData.name ?? 'N/A';
-            document.getElementById('modalTicketTypeDetail').textContent = ticketTypeFullText;
+            document.getElementById('modalTicketTypeDetail').textContent = ticketType;
             document.getElementById('modalTicketIdStub').textContent = `ID: ${(attendeeData.id ?? '--------').substring(0, 8).toUpperCase()}`;
-
-            new QRious({ 
-                element: document.getElementById('modalQrCodeCanvas'), 
-                value: JSON.stringify({ id: attendeeData.id, name: attendeeData.name, email: attendeeData.email }),
-                size: 200, padding: 5, background: 'white', foreground: 'black'
-            });
-
+            
+            generateQrCode(attendeeData);
+            
             document.getElementById('modalReceiptDate').textContent = attendeeData.registeredAt ? attendeeData.registeredAt.toDate().toLocaleDateString('en-IN', {dateStyle: 'long'}) : 'N/A';
             document.getElementById('modalReceiptName').textContent = attendeeData.name ?? 'N/A';
             document.getElementById('modalReceiptEmail').textContent = attendeeData.email ?? 'N/A';
-            document.getElementById('modalReceiptPaymentId').textContent = attendeeData.paymentId ?? 'N/A';
-            document.getElementById('modalReceiptDescription').textContent = `Ticket: ${ticketTypeFullText}`;
+            document.getElementById('modalReceiptPaymentId').textContent = attendeeData.paymentId ?? 'CASH';
+            document.getElementById('modalReceiptDescription').textContent = `Ticket: ${ticketType}`;
             const amountInRupees = `₹${(amount / 100).toFixed(2)}`;
             document.getElementById('modalReceiptAmount').textContent = amountInRupees;
             document.getElementById('modalReceiptTotal').textContent = amountInRupees;
@@ -374,182 +406,120 @@
 
         async function downloadElementAsJpg(elementId, fileName) {
             const element = document.getElementById(elementId);
-            const isTicket = elementId === 'ticket-to-download';
             try {
-                if (isTicket) element.classList.remove('overflow-hidden');
-                const bgColor = isTicket ? '#1F2937' : '#ffffff';
-                const canvas = await html2canvas(element, { scale: 3, backgroundColor: bgColor });
+                const bgColor = elementId === 'ticket-to-download' ? '#1F2937' : '#ffffff';
+                const canvas = await html2canvas(element, { scale: 3, backgroundColor: bgColor, useCORS: true });
                 const link = document.createElement('a');
                 link.download = fileName;
                 link.href = canvas.toDataURL('image/jpeg', 0.9);
                 link.click();
             } catch (error) {
-                console.error(`Error generating JPG for ${elementId}:`, error);
+                console.error(`Error generating JPG:`, error);
                 alert(`Failed to generate ${fileName}.`);
-            } finally {
-                if (isTicket) element.classList.add('overflow-hidden');
             }
         }
         
         async function downloadCombinedPdf() {
             if (!currentAttendee) return;
             const { jsPDF } = window.jspdf;
-            const ticketElement = document.getElementById('ticket-to-download');
-            const receiptElement = document.getElementById('receipt-to-download');
-            
+            const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
             try {
-                ticketElement.classList.remove('overflow-hidden');
-                const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+                const ticketCanvas = await html2canvas(document.getElementById('ticket-to-download'), { scale: 3, backgroundColor: '#1F2937', useCORS: true });
+                const receiptCanvas = await html2canvas(document.getElementById('receipt-to-download'), { scale: 3, backgroundColor: '#ffffff', useCORS: true });
                 const pdfWidth = pdf.internal.pageSize.getWidth();
-
-                const ticketCanvas = await html2canvas(ticketElement, { scale: 3, backgroundColor: '#1F2937' });
-                const ticketImgData = ticketCanvas.toDataURL('image/png');
-                const ticketImgProps = pdf.getImageProperties(ticketImgData);
+                const ticketImgProps = pdf.getImageProperties(ticketCanvas);
                 const ticketPdfHeight = (ticketImgProps.height * pdfWidth) / ticketImgProps.width;
-                pdf.addImage(ticketImgData, 'PNG', 10, 10, pdfWidth - 20, ticketPdfHeight);
+                pdf.addImage(ticketCanvas.toDataURL('image/png'), 'PNG', 10, 10, pdfWidth - 20, ticketPdfHeight);
                 pdf.addPage();
-                
-                const receiptCanvas = await html2canvas(receiptElement, { scale: 3, backgroundColor: '#ffffff' });
-                const receiptImgData = receiptCanvas.toDataURL('image/png');
-                const receiptImgProps = pdf.getImageProperties(receiptImgData);
+                const receiptImgProps = pdf.getImageProperties(receiptCanvas);
                 const receiptPdfHeight = (receiptImgProps.height * pdfWidth) / receiptImgProps.width;
-                pdf.addImage(receiptImgData, 'PNG', 10, 10, pdfWidth - 20, receiptPdfHeight);
-
+                pdf.addImage(receiptCanvas.toDataURL('image/png'), 'PNG', 10, 10, pdfWidth - 20, receiptPdfHeight);
                 pdf.save(`IGNITE-2025-Combined-${(currentAttendee.name ?? 'Attendee').replace(/\s+/g, '-')}.pdf`);
             } catch (error) {
                 console.error("PDF Generation Error:", error);
-                alert("Failed to generate PDF.");
-            } finally {
-                ticketElement.classList.add('overflow-hidden');
             }
         }
 
-        async function downloadCombinedJpg() {
-            if (!currentAttendee) return;
-            try {
-                const ticketCanvas = await html2canvas(document.getElementById('ticket-to-download'), { scale: 3, backgroundColor: '#1F2937' });
-                const receiptCanvas = await html2canvas(document.getElementById('receipt-to-download'), { scale: 3, backgroundColor: '#ffffff' });
-                
-                const combinedCanvas = document.createElement('canvas');
-                const padding = 30; 
-                combinedCanvas.width = Math.max(ticketCanvas.width, receiptCanvas.width) + (padding * 2);
-                combinedCanvas.height = ticketCanvas.height + receiptCanvas.height + (padding * 3);
-                
-                const ctx = combinedCanvas.getContext('2d');
-                ctx.fillStyle = '#111827';
-                ctx.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
-                
-                ctx.drawImage(ticketCanvas, (combinedCanvas.width - ticketCanvas.width) / 2, padding);
-                ctx.drawImage(receiptCanvas, (combinedCanvas.width - receiptCanvas.width) / 2, ticketCanvas.height + (padding * 2));
-
-                const link = document.createElement('a');
-                link.download = `IGNITE-2025-Combined-${(currentAttendee.name ?? 'Attendee').replace(/\s+/g, '-')}.jpg`;
-                link.href = combinedCanvas.toDataURL('image/jpeg', 0.9);
-                link.click();
-            } catch (error) {
-                console.error("JPG Combination Error:", error);
-                alert("Failed to generate combined JPG.");
-            }
-        }
-
-        function downloadLogAsPdf(attendeesToExport, filename) {
-            if (attendeesToExport.length === 0) return alert("No attendees to export.");
-            
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            doc.text(`IGNITE 2025 - Registration Log`, 14, 16);
-            
-            const tableColumn = ["Name", "Email", "Mobile", "Ticket Type", "Payment ID", "Registered At"];
-            const tableRows = [];
-
-            const sortedAttendees = [...attendeesToExport].sort((a, b) => (b.registeredAt?.toDate() || 0) - (a.registeredAt?.toDate() || 0));
-            sortedAttendees.forEach(attendee => {
-                tableRows.push([
-                    attendee.name ?? 'N/A',
-                    attendee.email ?? 'N/A',
-                    attendee.mobile ?? 'N/A',
-                    attendee.ticketType ?? 'N/A',
-                    attendee.paymentId ?? 'N/A',
-                    attendee.registeredAt ? attendee.registeredAt.toDate().toLocaleString('en-IN') : 'N/A'
-                ]);
-            });
-
-            doc.autoTable({ head: [tableColumn], body: tableRows, startY: 20 });
-            doc.save(filename);
-        }
-
-        function downloadLogAsJpg(attendeesToExport, filename) {
-            if (attendeesToExport.length === 0) return alert("No attendees to export.");
-
+        async function downloadLogAsJpg(attendeesToExport, filename) {
+            if (attendeesToExport.length === 0) return alert("No attendees to export for this view.");
             const table = document.createElement('table');
             table.className = 'w-full text-sm text-left';
             table.innerHTML = `
-                <thead class="text-xs uppercase text-text-secondary bg-bg-light">
+                <thead style="color: var(--text-secondary); background-color: var(--bg-light);">
                     <tr>
-                        <th scope="col" class="px-6 py-3">Name</th>
-                        <th scope="col" class="px-6 py-3">Email</th>
-                        <th scope="col" class="px-6 py-3">Mobile</th>
-                        <th scope="col" class="px-6 py-3">Payment ID</th>
-                        <th scope="col" class="px-6 py-3">Registered At</th>
+                        <th style="padding: 12px 24px;">Name</th>
+                        <th style="padding: 12px 24px;">Ticket ID</th>
+                        <th style="padding: 12px 24px;">Payment</th>
+                        <th style="padding: 12px 24px;">Registered At</th>
                     </tr>
                 </thead>
                 <tbody>
                     ${attendeesToExport.map(attendee => `
-                        <tr class="border-b bg-bg-dark border-slate/20">
-                            <td class="px-6 py-4 font-medium whitespace-nowrap text-text-primary">${attendee.name ?? 'N/A'}</td>
-                            <td class="px-6 py-4">${attendee.email ?? 'N/A'}</td>
-                            <td class="px-6 py-4">${attendee.mobile ?? 'N/A'}</td>
-                            <td class="px-6 py-4">${attendee.paymentId ?? 'N/A'}</td>
-                            <td class="px-6 py-4">${attendee.registeredAt ? attendee.registeredAt.toDate().toLocaleString('en-IN') : 'N/A'}</td>
+                        <tr style="border-bottom: 1px solid #374151;">
+                            <td style="padding: 16px 24px; color: var(--text-primary);">${attendee.name ?? 'N/A'}</td>
+                            <td style="padding: 16px 24px;">${attendee.id ?? 'N/A'}</td>
+                            <td style="padding: 16px 24px;">${attendee.paymentType ?? 'N/A'}</td>
+                            <td style="padding: 16px 24px;">${attendee.registeredAt ? attendee.registeredAt.toDate().toLocaleString('en-IN') : 'N/A'}</td>
                         </tr>
                     `).join('')}
-                </tbody>
-            `;
+                </tbody>`;
             
             const container = document.createElement('div');
-            container.style.cssText = 'position: absolute; left: -9999px; padding: 20px; background-color: var(--bg-dark);';
+            container.style.cssText = `position: absolute; left: -9999px; padding: 20px; background-color: var(--bg-dark); font-family: 'Inter', sans-serif; color: var(--text-secondary);`;
             const title = document.createElement('h1');
-            title.className = 'mb-4 text-3xl font-bold text-text-primary';
-            title.textContent = `IGNITE 2025 - ${currentFilter === 'all' ? 'Full' : 'Today\'s'} Log`;
+            title.style.cssText = `margin-bottom: 16px; font-size: 24px; font-weight: bold; color: var(--text-primary);`;
+            title.textContent = `IGNITE 2025 - ${attendeeListTitle.textContent}`;
             container.appendChild(title);
             container.appendChild(table);
             document.body.appendChild(container);
 
-            html2canvas(container, { scale: 2 }).then(canvas => {
+            try {
+                const canvas = await html2canvas(container, { scale: 2 });
                 const link = document.createElement('a');
                 link.download = filename;
                 link.href = canvas.toDataURL('image/jpeg', 0.9);
                 link.click();
+            } catch(e) {
+                console.error("JPG log generation failed", e);
+            } finally {
                 document.body.removeChild(container);
-            });
+            }
+        }
+
+        function downloadLogAsPdf(attendeesToExport, filename) {
+            if (attendeesToExport.length === 0) return alert("No attendees to export for this view.");
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.text(`IGNITE 2025 - ${attendeeListTitle.textContent}`, 14, 16);
+            const tableColumn = ["Name", "Email", "Mobile", "Payment", "Ticket ID", "Registered At"];
+            const tableRows = attendeesToExport.map(a => [a.name, a.email, a.mobile, a.paymentType, a.id, a.registeredAt ? a.registeredAt.toDate().toLocaleString('en-IN') : 'N/A']);
+            doc.autoTable({ head: [tableColumn], body: tableRows, startY: 20 });
+            doc.save(filename);
         }
 
         // --- Event Listeners ---
         loginForm.addEventListener('submit', handleLogin);
-        totalRegistrationsCard.addEventListener('click', () => { currentFilter = 'all'; applyFilterAndRender(); });
-        todayRegistrationsCard.addEventListener('click', () => { currentFilter = 'today'; applyFilterAndRender(); });
         closeModalBtn.addEventListener('click', () => attendeeModalEl.classList.add('hidden'));
-        
-        downloadTicketPngBtn.addEventListener('click', () => currentAttendee && downloadElementAsJpg('ticket-to-download', `IGNITE-Ticket-${(currentAttendee.name ?? '').replace(/\s+/g, '-')}.jpg`));
-        downloadReceiptPngBtn.addEventListener('click', () => currentAttendee && downloadElementAsJpg('receipt-to-download', `IGNITE-Receipt-${(currentAttendee.name ?? '').replace(/\s+/g, '-')}.jpg`));
+        totalRegistrationsCard.addEventListener('click', () => { dateFilter = 'all'; totalRegistrationsCard.classList.add('stat-card-active'); todayRegistrationsCard.classList.remove('stat-card-active'); updateDashboard(); });
+        todayRegistrationsCard.addEventListener('click', () => { dateFilter = 'today'; totalRegistrationsCard.classList.remove('stat-card-active'); todayRegistrationsCard.classList.add('stat-card-active'); updateDashboard(); });
+        filterAllBtn.addEventListener('click', () => { viewFilter = 'all'; filterAllBtn.classList.add('filter-btn-active'); filterOnlineBtn.classList.remove('filter-btn-active'); filterCashBtn.classList.remove('filter-btn-active'); updateDashboard(); });
+        filterOnlineBtn.addEventListener('click', () => { viewFilter = 'online'; filterAllBtn.classList.remove('filter-btn-active'); filterOnlineBtn.classList.add('filter-btn-active'); filterCashBtn.classList.remove('filter-btn-active'); updateDashboard(); });
+        filterCashBtn.addEventListener('click', () => { viewFilter = 'cash'; filterAllBtn.classList.remove('filter-btn-active'); filterOnlineBtn.classList.remove('filter-btn-active'); filterCashBtn.classList.add('filter-btn-active'); updateDashboard(); });
+        downloadTicketJpgBtn.addEventListener('click', () => currentAttendee && downloadElementAsJpg('ticket-to-download', `IGNITE-Ticket-${(currentAttendee.name ?? '').replace(/\s+/g, '-')}.jpg`));
+        downloadReceiptJpgBtn.addEventListener('click', () => currentAttendee && downloadElementAsJpg('receipt-to-download', `IGNITE-Receipt-${(currentAttendee.name ?? '').replace(/\s+/g, '-')}.jpg`));
         downloadPdfBtn.addEventListener('click', downloadCombinedPdf);
-        downloadJpgBtn.addEventListener('click', downloadCombinedJpg);
-
-        downloadFullLogBtn.addEventListener('click', () => downloadLogAsPdf(allAttendees, 'ignite-2025-full-log.pdf'));
-        downloadFullLogJpgBtn.addEventListener('click', () => downloadLogAsJpg(allAttendees, 'ignite-2025-full-log.jpg'));
-        
-        downloadTodayLogBtn.addEventListener('click', () => {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const todayRegistrations = allAttendees.filter(a => a.registeredAt && a.registeredAt.toDate() >= today);
-            downloadLogAsPdf(todayRegistrations, 'ignite-2025-today-log.pdf');
-        });
-        downloadTodayLogJpgBtn.addEventListener('click', () => {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const todayRegistrations = allAttendees.filter(a => a.registeredAt && a.registeredAt.toDate() >= today);
-            downloadLogAsJpg(todayRegistrations, 'ignite-2025-today-log.jpg');
-        });
+        function getFilteredDataForExport() {
+            let baseList = (viewFilter === 'online') ? onlineAttendees : (viewFilter === 'cash') ? cashAttendees : allAttendees;
+            if (dateFilter === 'today') {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                return baseList.filter(a => a.registeredAt && a.registeredAt.toDate() >= today);
+            }
+            return baseList;
+        }
+        downloadLogPdfBtn.addEventListener('click', () => downloadLogAsPdf(getFilteredDataForExport(), `ignite-2025-log.pdf`));
+        downloadLogJpgBtn.addEventListener('click', () => downloadLogAsJpg(getFilteredDataForExport(), `ignite-2025-log.jpg`));
     </script>
+
 </body>
 </html>
