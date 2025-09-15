@@ -40,13 +40,17 @@
             color: #F9FAFB;
             border: 1px solid #374151;
             display: flex; 
+            flex-direction: row; /* Enforce side-by-side layout */
             box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
         }
         .ticket-main { 
+            width: 70%;
             padding: 1.5rem; 
+            border-right: 2px dashed #4B5563; 
             text-align: left; 
         }
         .ticket-stub {
+            width: 30%;
             padding: 1rem;
             gap: 0.5rem; 
             display: flex; 
@@ -59,12 +63,28 @@
             background-color: #374151;
         }
         
+        /* Updated QR code styling */
         #modalQrCodeCanvas {
             display: block;
-            background-color: white;
-            padding: 5px;
-            border-radius: 4px;
+            width: 100%; /* Make it fill its container */
+            height: auto;
+            max-width: 112px; /* Maintain original max size for sharpness */
+            background-color: transparent; /* Remove white background */
+            padding: 0; /* Remove padding */
+            border-radius: 0; /* Remove border radius */
         }
+        /* New styling for QR code container to provide background */
+        .qr-code-container {
+            background-color: white; /* White background for the QR code area */
+            padding: 5px; /* Add some padding around the QR code itself */
+            border-radius: 4px; /* Rounded corners for the white box */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            max-width: fit-content; /* Adjust container size to content */
+            margin: 0 auto; /* Center the container */
+        }
+
 
         .ticket-stub::before, .ticket-stub::after {
             content: ''; 
@@ -77,13 +97,6 @@
         }
         .ticket-stub::before { top: -11px; } 
         .ticket-stub::after { bottom: -11px; }
-
-        /* Hide punch-hole effect on mobile where it doesn't make sense */
-        @media (max-width: 639px) {
-            .ticket-stub::before, .ticket-stub::after {
-                display: none;
-            }
-        }
 
         .receipt-container {
             font-family: 'Inter', sans-serif; 
@@ -177,8 +190,8 @@
             <button id="closeModalBtn" class="absolute z-10 flex items-center justify-center w-8 h-8 text-white transition bg-red-600 rounded-full shadow-lg -top-3 -right-3 hover:bg-red-700">&times;</button>
             <div id="modalContent" class="p-4 rounded-lg bg-bg-dark max-h-[90vh] overflow-y-auto attendee-list">
                 
-                <div id="ticket-to-download" class="movie-ticket flex flex-col sm:flex-row rounded-lg overflow-hidden">
-                     <div class="ticket-main w-full sm:w-[70%] border-b-2 sm:border-b-0 sm:border-r-2 border-dashed border-gray-700">
+                <div id="ticket-to-download" class="movie-ticket flex-row rounded-lg overflow-hidden">
+                     <div class="ticket-main w-[70%] border-r-2 border-dashed border-gray-700">
                          <h2 class="text-3xl sm:text-4xl text-red-500">IGNITE 2025</h2>
                          <p class="text-base sm:text-lg tracking-widest text-gray-400">ADMIT ONE</p>
                          <div class="my-2 sm:my-4">
@@ -191,9 +204,11 @@
                         </div>
                          <p class="text-xs text-gray-500">This ticket is non-transferable.</p>
                      </div>
-                     <div class="ticket-stub w-full sm:w-[30%]">
+                     <div class="ticket-stub w-[30%]">
                          <p class="text-lg sm:text-xl font-bold text-gray-200">#IGNITE2025</p>
-                         <canvas id="modalQrCodeCanvas"></canvas>
+                         <div class="qr-code-container">
+                            <canvas id="modalQrCodeCanvas"></canvas>
+                         </div>
                          <p id="modalTicketIdStub" class="text-xs text-gray-400 break-all"></p>
                      </div>
                 </div>
@@ -203,6 +218,7 @@
                      <div class="space-y-4">
                          <div><p class="text-sm text-gray-500">Billed To:</p><p class="font-semibold" id="modalReceiptName"></p><p class="text-sm" id="modalReceiptEmail"></p></div>
                          <div><p class="text-sm text-gray-500">Payment ID:</p><p class="font-semibold text-sm" id="modalReceiptPaymentId"></p></div>
+                         <div id="payerUpiWrapper" class="hidden"><p class="text-sm text-gray-500">Payer UPI Address:</p><p class="font-semibold text-sm" id="modalReceiptPayerUpi"></p></div>
                          <table class="w-full text-left">
                              <thead><tr class="border-b border-gray-200"><th class="py-2 font-semibold">Description</th><th class="py-2 font-semibold text-right">Amount</th></tr></thead>
                              <tbody><tr><td class="py-2" id="modalReceiptDescription"></td><td class="py-2 text-right" id="modalReceiptAmount"></td></tr></tbody>
@@ -372,10 +388,10 @@
             new QRious({
                 element: canvasElement,
                 value: JSON.stringify({ id: attendeeData.id, name: attendeeData.name, email: attendeeData.email }),
-                size: 112,
+                size: 112, /* This is the internal resolution, actual display size from CSS */
                 level: 'H',
-                padding: 4,
-                background: 'white',
+                padding: 0, /* No internal padding from QRious */
+                background: 'transparent', /* Let CSS handle the background */
                 foreground: 'black'
             });
         }
@@ -396,6 +412,16 @@
             document.getElementById('modalReceiptName').textContent = attendeeData.name ?? 'N/A';
             document.getElementById('modalReceiptEmail').textContent = attendeeData.email ?? 'N/A';
             document.getElementById('modalReceiptPaymentId').textContent = attendeeData.paymentId ?? 'CASH';
+            
+            const payerUpiWrapper = document.getElementById('payerUpiWrapper');
+            const modalReceiptPayerUpi = document.getElementById('modalReceiptPayerUpi');
+            if (attendeeData.payerUpi) {
+                modalReceiptPayerUpi.textContent = attendeeData.payerUpi;
+                payerUpiWrapper.classList.remove('hidden');
+            } else {
+                payerUpiWrapper.classList.add('hidden');
+            }
+
             document.getElementById('modalReceiptDescription').textContent = `Ticket: ${ticketType}`;
             const amountInRupees = `₹${(amount / 100).toFixed(2)}`;
             document.getElementById('modalReceiptAmount').textContent = amountInRupees;
@@ -450,6 +476,7 @@
                         <th style="padding: 12px 24px;">Name</th>
                         <th style="padding: 12px 24px;">Ticket ID</th>
                         <th style="padding: 12px 24px;">Payment</th>
+                        <th style="padding: 12px 24px;">Payer UPI</th>
                         <th style="padding: 12px 24px;">Registered At</th>
                     </tr>
                 </thead>
@@ -459,6 +486,7 @@
                             <td style="padding: 16px 24px; color: var(--text-primary);">${attendee.name ?? 'N/A'}</td>
                             <td style="padding: 16px 24px;">${attendee.id ?? 'N/A'}</td>
                             <td style="padding: 16px 24px;">${attendee.paymentType ?? 'N/A'}</td>
+                            <td style="padding: 16px 24px;">${attendee.payerUpi ?? 'N/A'}</td>
                             <td style="padding: 16px 24px;">${attendee.registeredAt ? attendee.registeredAt.toDate().toLocaleString('en-IN') : 'N/A'}</td>
                         </tr>
                     `).join('')}
@@ -491,8 +519,8 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             doc.text(`IGNITE 2025 - ${attendeeListTitle.textContent}`, 14, 16);
-            const tableColumn = ["Name", "Email", "Mobile", "Payment", "Ticket ID", "Registered At"];
-            const tableRows = attendeesToExport.map(a => [a.name, a.email, a.mobile, a.paymentType, a.id, a.registeredAt ? a.registeredAt.toDate().toLocaleString('en-IN') : 'N/A']);
+            const tableColumn = ["Name", "Email", "Mobile", "Payment", "Ticket ID", "Payer UPI", "Registered At"];
+            const tableRows = attendeesToExport.map(a => [a.name, a.email, a.mobile, a.paymentType, a.id, a.payerUpi ?? 'N/A', a.registeredAt ? a.registeredAt.toDate().toLocaleString('en-IN') : 'N/A']);
             doc.autoTable({ head: [tableColumn], body: tableRows, startY: 20 });
             doc.save(filename);
         }
