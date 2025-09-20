@@ -15,12 +15,11 @@
     
     <style>
         :root {
-            --bg-dark: #111827;
-            --bg-light: #1F2937;
-            --primary-red: #EF4444;
-            --secondary-orange: #F97316;
-            --text-primary: #F9FAFB;
-            --text-secondary: #D1D5DB;
+            --bg-dark: #0B120E;
+            --bg-light: #111A15;
+            --primary-green: #16FF00;
+            --text-primary: #f8fafc;
+            --text-secondary: #a0aec0;
         }
         body {
             font-family: 'Inter', sans-serif;
@@ -29,75 +28,66 @@
         }
         .attendee-list::-webkit-scrollbar { width: 8px; }
         .attendee-list::-webkit-scrollbar-track { background: var(--bg-dark); border-radius: 10px; }
-        .attendee-list::-webkit-scrollbar-thumb { background: var(--primary-red); border-radius: 10px; }
-        .attendee-list::-webkit-scrollbar-thumb:hover { background: #d03030; }
+        .attendee-list::-webkit-scrollbar-thumb { background: var(--primary-green); border-radius: 10px; }
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         .modal-fade-in { animation: fadeIn 0.3s ease-out forwards; }
-        
+        .neon-text { color: var(--primary-green); text-shadow: 0 0 5px var(--primary-green), 0 0 10px var(--primary-green); }
+
         .movie-ticket {
             font-family: 'Bebas Neue', cursive; 
-            background-color: #1F2937;
+            background-color: #111A15;
             color: #F9FAFB;
             border: 1px solid #374151;
             display: flex; 
-            flex-direction: row; /* Enforce side-by-side layout */
+            flex-direction: column;
             box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+            max-width: 400px;
+            margin: auto;
         }
         .ticket-main { 
-            width: 70%;
+            width: 100%;
             padding: 1.5rem; 
-            border-right: 2px dashed #4B5563; 
+            border-bottom: 2px dashed #4B5563;
             text-align: left; 
         }
         .ticket-stub {
-            width: 30%;
+            width: 100%;
             padding: 1rem;
-            gap: 0.5rem; 
             display: flex; 
             flex-direction: column;
-            justify-content: center; 
-            align-items: center; 
-            text-align: center; 
-            position: relative;
-            flex-shrink: 0; 
-            background-color: #374151;
-        }
-        
-        /* Updated QR code styling */
-        #modalQrCodeCanvas {
-            display: block;
-            width: 100%; /* Make it fill its container */
-            height: auto;
-            max-width: 112px; /* Maintain original max size for sharpness */
-            background-color: transparent; /* Remove white background */
-            padding: 0; /* Remove padding */
-            border-radius: 0; /* Remove border radius */
-        }
-        /* New styling for QR code container to provide background */
-        .qr-code-container {
-            background-color: white; /* White background for the QR code area */
-            padding: 5px; /* Add some padding around the QR code itself */
-            border-radius: 4px; /* Rounded corners for the white box */
-            display: flex;
             justify-content: center;
             align-items: center;
-            max-width: fit-content; /* Adjust container size to content */
-            margin: 0 auto; /* Center the container */
+            gap: 0.75rem;
+            position: relative;
+            background-color: #1F2D37;
         }
-
+        
+        .qr-code-container {
+            border-radius: 8px;
+            overflow: hidden;
+            line-height: 0;
+        }
+        #modalQrCodeCanvas { 
+            display: block; 
+        }
 
         .ticket-stub::before, .ticket-stub::after {
             content: ''; 
             position: absolute; 
-            left: -12px; 
+            top: -12px;
             width: 20px; 
             height: 20px;
             background: var(--bg-dark);
             border-radius: 50%;
         }
-        .ticket-stub::before { top: -11px; } 
-        .ticket-stub::after { bottom: -11px; }
-
+        .ticket-stub::before { 
+            left: -11px;
+        } 
+        .ticket-stub::after { 
+            right: -11px;
+            left: auto;
+        }
+        
         .receipt-container {
             font-family: 'Inter', sans-serif; 
             background-color: #ffffff; 
@@ -105,14 +95,11 @@
             padding: 1.5rem; 
             margin-top: 1rem; 
             border: 1px solid #e5e7eb;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
         }
-        .stat-card-active {
-            box-shadow: 0 0 0 2px var(--primary-red);
-        }
-        .filter-btn-active { 
-            background-color: var(--primary-red); 
-            color: white; 
-        }
+        .stat-card-active { box-shadow: 0 0 0 2px var(--primary-green); }
     </style>
 </head>
 <body class="h-full">
@@ -124,10 +111,10 @@
                 <div class="space-y-4">
                     <div>
                         <label for="password" class="sr-only">Password</label>
-                        <input id="password" name="password" type="password" required class="w-full px-4 py-2 text-white transition duration-200 bg-gray-700 border border-gray-600 rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-primary-red" placeholder="Enter Password">
+                        <input id="password" name="password" type="password" required class="w-full px-4 py-2 text-white transition duration-200 bg-gray-800 border border-gray-700 rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-[var(--primary-green)]" placeholder="Enter Password">
                     </div>
                     <p id="error-message" class="text-sm text-center text-red-500 hidden">Incorrect Password. Please try again.</p>
-                    <button type="submit" class="w-full px-4 py-2 font-bold text-white transition-colors duration-200 transform rounded-md bg-primary-red hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-bg-light focus:ring-primary-red">
+                    <button type="submit" class="w-full px-4 py-2 font-bold text-black transition-colors duration-200 transform rounded-md bg-[var(--primary-green)] hover:bg-green-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-bg-light focus:ring-[var(--primary-green)]">
                         Login
                     </button>
                 </div>
@@ -138,46 +125,60 @@
     <div id="dashboard-content" class="min-h-full hidden">
         <header class="shadow-lg bg-bg-light">
             <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-                <h1 class="text-3xl font-bold text-text-primary" style="font-family: 'Bebas Neue', cursive;">
+                <h1 class="text-3xl font-bold text-text-primary neon-text" style="font-family: 'Bebas Neue', cursive;">
                     IGNITE 2025 - Admin Dashboard
                 </h1>
             </div>
         </header>
         <main>
             <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div id="totalRegistrationsCard" class="p-6 rounded-lg shadow-md cursor-pointer bg-bg-light transition-shadow hover:shadow-xl">
-                        <h3 class="text-lg font-medium leading-6 text-text-secondary">Total Registrations</h3>
-                        <p id="totalRegistrations" class="mt-2 text-5xl font-bold text-red-500">0</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div class="p-6 rounded-lg shadow-md bg-bg-light">
+                        <h3 class="text-lg font-medium leading-6 text-text-secondary">Pending Approval</h3>
+                        <p id="totalRegistrations" class="mt-2 text-5xl font-bold text-orange-400">0</p>
                     </div>
-                     <div id="todayRegistrationsCard" class="p-6 rounded-lg shadow-md cursor-pointer bg-bg-light transition-shadow hover:shadow-xl">
-                        <h3 class="text-lg font-medium leading-6 text-text-secondary">Registrations Today</h3>
-                        <p id="todayRegistrations" class="mt-2 text-5xl font-bold text-orange-500">0</p>
+                     <div class="p-6 rounded-lg shadow-md bg-bg-light">
+                        <h3 class="text-lg font-medium leading-6 text-text-secondary">Approved Tickets</h3>
+                        <p id="approvedRegistrations" class="mt-2 text-5xl font-bold text-green-400">0</p>
                     </div>
+                    <div class="p-6 rounded-lg shadow-md bg-bg-light">
+                        <h3 class="text-lg font-medium leading-6 text-text-secondary">Total Registrations Today</h3>
+                        <p id="todayRegistrations" class="mt-2 text-5xl font-bold text-cyan-400">0</p>
+                    </div>
+                </div>
+                
+                <div class="shadow-md sm:rounded-lg bg-bg-light mb-6 p-6">
+                     <h3 class="text-lg font-medium leading-6 text-text-primary">Manually Generate Ticket</h3>
+                     <p class="max-w-2xl mt-1 text-sm text-text-secondary">For cash payments or manual entries.</p>
+                     <form id="manual-entry-form" class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                         <input name="name" required class="md:col-span-1 w-full px-4 py-2 text-white bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-green)]" placeholder="Full Name">
+                         <input name="email" type="email" class="md:col-span-1 w-full px-4 py-2 text-white bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-green)]" placeholder="Email (Optional)">
+                         <input name="mobile" type="tel" class="md:col-span-1 w-full px-4 py-2 text-white bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-green)]" placeholder="Mobile (Optional)">
+                         <select name="ticketType" class="w-full px-4 py-2 text-white bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-green)]">
+                             <option value="Student">Student Pass (₹850)</option>
+                             <option value="Outsider">Outsider Pass (₹900)</option>
+                         </select>
+                         <select name="paymentType" class="w-full px-4 py-2 text-white bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-green)]">
+                              <option value="Cash">Cash Payment</option>
+                              <option value="Manual Online">Manual Online</option>
+                         </select>
+                         <button type="submit" class="w-full px-4 py-2 font-bold text-black bg-[var(--primary-green)] rounded-md hover:bg-green-400">Generate Ticket</button>
+                     </form>
                 </div>
 
                 <div class="shadow-md sm:rounded-lg bg-bg-light">
                     <div class="px-4 py-5 border-b sm:px-6 border-slate-800">
-                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                            <div>
-                                <h3 id="attendeeListTitle" class="text-lg font-medium leading-6 text-text-primary">All Attendees</h3>
-                                <p class="max-w-2xl mt-1 text-sm text-text-secondary">A real-time list of registered attendees.</p>
-                            </div>
-                            <div class="flex items-center gap-2 mt-4 sm:mt-0 p-1 bg-bg-dark rounded-lg">
-                                <button id="filterAllBtn" class="px-3 py-1 text-sm font-semibold rounded-md filter-btn-active">All</button>
-                                <button id="filterOnlineBtn" class="px-3 py-1 text-sm font-semibold rounded-md text-text-secondary hover:bg-gray-700">Online</button>
-                                <button id="filterCashBtn" class="px-3 py-1 text-sm font-semibold rounded-md text-text-secondary hover:bg-gray-700">Cash</button>
-                            </div>
-                        </div>
+                        <h3 class="text-lg font-medium leading-6 text-text-primary">All Attendees</h3>
+                        <p class="max-w-2xl mt-1 text-sm text-text-secondary">A real-time list of all registered attendees.</p>
                     </div>
-                    <div id="attendeeList" class="attendee-list max-h-[65vh] overflow-y-auto">
-                        <p id="loadingMessage" class="p-10 text-center text-text-secondary">Loading attendee data...</p>
+                    <div id="attendeeListContainer"> <p id="loadingMessage" class="p-10 text-center text-text-secondary">Loading attendee data...</p>
+                        <div id="attendeeList" class="attendee-list max-h-[65vh] overflow-y-auto"></div>
                     </div>
                     <div class="px-4 py-4 border-t sm:px-6 border-slate-800">
                         <p class="text-sm font-semibold text-text-primary mb-3">Download Reports</p>
                         <div class="flex flex-col gap-4 sm:flex-row">
-                             <button id="downloadLogPdfBtn" class="w-full px-4 py-3 font-bold text-white transition rounded-lg bg-primary-red hover:bg-red-600">Download Current View (PDF)</button>
-                             <button id="downloadLogJpgBtn" class="w-full px-4 py-3 font-bold text-white transition rounded-lg bg-secondary-orange hover:bg-orange-600">Download Current View (JPG)</button>
+                            <button id="downloadLogPdfBtn" class="w-full px-4 py-3 font-bold text-black transition rounded-lg bg-[var(--primary-green)] hover:bg-green-400">Download Full Log (PDF)</button>
+                            <button id="downloadLogJpgBtn" class="w-full px-4 py-3 font-bold text-white transition rounded-lg bg-gray-600 hover:bg-gray-700">Download Full Log (JPG)</button>
                         </div>
                     </div>
                 </div>
@@ -188,38 +189,44 @@
     <div id="attendeeModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-70 hidden">
         <div class="relative w-full max-w-lg modal-fade-in">
             <button id="closeModalBtn" class="absolute z-10 flex items-center justify-center w-8 h-8 text-white transition bg-red-600 rounded-full shadow-lg -top-3 -right-3 hover:bg-red-700">&times;</button>
-            <div id="modalContent" class="p-4 rounded-lg bg-bg-dark max-h-[90vh] overflow-y-auto attendee-list">
+            <div id="modalContent" class="p-0 rounded-lg max-h-[90vh] overflow-y-auto attendee-list">
                 
-                <div id="ticket-to-download" class="movie-ticket flex-row rounded-lg overflow-hidden">
-                     <div class="ticket-main w-[70%] border-r-2 border-dashed border-gray-700">
-                         <h2 class="text-3xl sm:text-4xl text-red-500">IGNITE 2025</h2>
-                         <p class="text-base sm:text-lg tracking-widest text-gray-400">ADMIT ONE</p>
-                         <div class="my-2 sm:my-4">
-                             <p class="text-xs sm:text-sm text-gray-400">ATTENDEE</p>
-                             <p id="modalTicketName" class="text-2xl sm:text-3xl break-words text-white"></p>
-                         </div>
-                         <div class="my-2 sm:my-4">
-                            <p class="text-xs sm:text-sm text-gray-400">TICKET TYPE</p>
-                            <p id="modalTicketTypeDetail" class="text-lg sm:text-xl text-white"></p>
+                <div id="ticket-to-download" class="movie-ticket rounded-lg overflow-hidden">
+                    <div class="ticket-main">
+                        <div class="flex items-start gap-4">
+                            <img src="https://i.postimg.cc/HkXcxcgX/1758263167091.png" alt="IGNITE 2025 Logo" class="w-12 h-12">
+                            <div>
+                                <h2 class="text-4xl neon-text">IGNITE 2025</h2>
+                                <p class="text-lg tracking-widest text-gray-400">ADMIT ONE</p>
+                            </div>
                         </div>
-                         <p class="text-xs text-gray-500">This ticket is non-transferable.</p>
-                     </div>
-                     <div class="ticket-stub w-[30%]">
-                         <p class="text-lg sm:text-xl font-bold text-gray-200">#IGNITE2025</p>
-                         <div class="qr-code-container">
-                            <canvas id="modalQrCodeCanvas"></canvas>
-                         </div>
-                         <p id="modalTicketIdStub" class="text-xs text-gray-400 break-all"></p>
-                     </div>
+                        <div class="my-4">
+                            <p class="text-sm text-gray-400">ATTENDEE</p>
+                            <p id="modalTicketName" class="text-3xl break-words text-white"></p>
+                        </div>
+                        <div class="my-4">
+                           <p class="text-sm text-gray-400">TICKET TYPE</p>
+                           <p id="modalTicketTypeDetail" class="text-xl text-white"></p>
+                       </div>
+                        <p class="text-xs text-gray-500">This ticket is non-transferable.</p>
+                    </div>
+                    <div class="ticket-stub">
+                        <p class="text-2xl font-bold text-gray-200">#IGNITE2025</p>
+                        <div class="qr-code-container">
+                             <canvas id="modalQrCodeCanvas"></canvas>
+                        </div>
+                        <div class="text-center">
+                            <p id="modalTicketIdStub" class="text-sm font-semibold tracking-widest text-gray-400 break-all"></p>
+                            <img src="https://i.postimg.cc/5Np2vjZT/image.png" alt="Raasta Nagpur Logo" class="h-8 opacity-70 mt-2 mx-auto">
+                        </div>
+                    </div>
                 </div>
                 
-                <div id="receipt-to-download" class="mt-4 overflow-hidden rounded-lg receipt-container">
+                <div id="receipt-to-download" class="receipt-container rounded-lg">
                      <div class="flex items-center justify-between pb-4 mb-4 border-b border-gray-200"><h2 class="text-2xl font-bold text-gray-800">Payment Receipt</h2><span class="text-sm text-gray-500" id="modalReceiptDate"></span></div>
-                     <div class="space-y-4">
+                     <div>
                          <div><p class="text-sm text-gray-500">Billed To:</p><p class="font-semibold" id="modalReceiptName"></p><p class="text-sm" id="modalReceiptEmail"></p></div>
-                         <div><p class="text-sm text-gray-500">Payment ID:</p><p class="font-semibold text-sm" id="modalReceiptPaymentId"></p></div>
-                         <div id="payerUpiWrapper" class="hidden"><p class="text-sm text-gray-500">Payer UPI Address:</p><p class="font-semibold text-sm" id="modalReceiptPayerUpi"></p></div>
-                         <table class="w-full text-left">
+                         <table class="w-full my-4 text-left">
                              <thead><tr class="border-b border-gray-200"><th class="py-2 font-semibold">Description</th><th class="py-2 font-semibold text-right">Amount</th></tr></thead>
                              <tbody><tr><td class="py-2" id="modalReceiptDescription"></td><td class="py-2 text-right" id="modalReceiptAmount"></td></tr></tbody>
                              <tfoot><tr class="font-bold border-t-2 border-gray-800"><td class="py-2">Total Paid</td><td class="py-2 text-right" id="modalReceiptTotal"></td></tr></tfoot>
@@ -227,11 +234,14 @@
                          <div class="pt-4 text-center"><p class="inline-block p-2 text-2xl font-bold text-green-600 border-4 border-green-600 rounded-lg -rotate-12">PAID</p></div>
                      </div>
                 </div>
-                 <div class="flex flex-wrap justify-center gap-2 p-3 mt-4 rounded-lg bg-bg-light">
-                    <button id="downloadTicketJpgBtn" class="flex-grow px-4 py-3 font-semibold text-white transition rounded-lg bg-red-600 hover:bg-red-700">Download Ticket (JPG)</button>
-                    <button id="downloadReceiptJpgBtn" class="flex-grow px-4 py-3 font-semibold text-white transition bg-gray-600 hover:bg-gray-700">Download Receipt (JPG)</button>
-                    <button id="downloadPdfBtn" class="w-full px-4 py-3 mt-2 font-semibold text-white transition rounded-lg bg-orange-600 hover:bg-orange-700">Download Both (PDF)</button>
-                </div>
+                
+                 <div id="approval-section" class="mt-4 max-w-sm mx-auto"></div>
+
+                 <div class="flex flex-wrap justify-center gap-2 p-3 mt-4 rounded-lg bg-bg-light max-w-sm mx-auto">
+                     <button id="downloadTicketJpgBtn" class="flex-grow px-4 py-3 font-semibold text-white transition rounded-lg bg-green-600 hover:bg-green-700">Ticket (JPG)</button>
+                     <button id="downloadReceiptJpgBtn" class="flex-grow px-4 py-3 font-semibold text-white transition rounded-lg bg-gray-600 hover:bg-gray-700">Receipt (JPG)</button>
+                     <button id="downloadPdfBtn" class="w-full px-4 py-3 mt-2 font-semibold text-white transition rounded-lg bg-green-800 hover:bg-green-900">Download Both (PDF)</button>
+                 </div>
             </div>
         </div>
     </div>
@@ -239,7 +249,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, query, orderBy, addDoc, serverTimestamp, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAPd9loQiNnouyKtxfwv-s7jcPzpZKmhys",
@@ -250,49 +260,40 @@
             appId: "1:480552824914:web:d67e8c9f208c67ac7fef8b",
             measurementId: "G-RLPWDK8MR2"
         };
+        const TICKET_PRICES = { 'Student': 850, 'Outsider': 900 };
+        const CORRECT_PASSWORD = "1234"; 
         
-        // --- State Management ---
-        let db;
-        let currentAttendee = null;
-        let onlineAttendees = [], cashAttendees = [], allAttendees = [];
-        let viewFilter = 'all', dateFilter = 'all';
+        let db, currentAttendee = null;
+        let pendingAttendees = [], approvedAttendees = [], allAttendees = [];
 
-        // --- All UI element declarations ---
-        const loginForm = document.getElementById('login-form'),
-            errorMessage = document.getElementById('error-message'),
-            loginOverlay = document.getElementById('login-overlay'),
-            dashboardContent = document.getElementById('dashboard-content'),
-            attendeeListEl = document.getElementById('attendeeList'),
-            attendeeListTitle = document.getElementById('attendeeListTitle'),
-            totalRegistrationsEl = document.getElementById('totalRegistrations'),
-            todayRegistrationsEl = document.getElementById('todayRegistrations'),
-            totalRegistrationsCard = document.getElementById('totalRegistrationsCard'),
-            todayRegistrationsCard = document.getElementById('todayRegistrationsCard'),
-            loadingMessageEl = document.getElementById('loadingMessage'),
-            attendeeModalEl = document.getElementById('attendeeModal'),
-            closeModalBtn = document.getElementById('closeModalBtn'),
-            downloadTicketJpgBtn = document.getElementById('downloadTicketJpgBtn'),
-            downloadReceiptJpgBtn = document.getElementById('downloadReceiptJpgBtn'),
-            downloadPdfBtn = document.getElementById('downloadPdfBtn'),
-            downloadLogPdfBtn = document.getElementById('downloadLogPdfBtn'),
-            downloadLogJpgBtn = document.getElementById('downloadLogJpgBtn'),
-            filterAllBtn = document.getElementById('filterAllBtn'),
-            filterOnlineBtn = document.getElementById('filterOnlineBtn'),
-            filterCashBtn = document.getElementById('filterCashBtn');
+        const ui = {
+            loginForm: document.getElementById('login-form'),
+            errorMessage: document.getElementById('error-message'),
+            loginOverlay: document.getElementById('login-overlay'),
+            dashboardContent: document.getElementById('dashboard-content'),
+            attendeeListEl: document.getElementById('attendeeList'),
+            loadingMessage: document.getElementById('loadingMessage'),
+            totalRegistrationsEl: document.getElementById('totalRegistrations'),
+            approvedRegistrationsEl: document.getElementById('approvedRegistrations'),
+            todayRegistrationsEl: document.getElementById('todayRegistrations'),
+            manualEntryForm: document.getElementById('manual-entry-form'),
+            attendeeModalEl: document.getElementById('attendeeModal'),
+            closeModalBtn: document.getElementById('closeModalBtn'),
+            downloadTicketJpgBtn: document.getElementById('downloadTicketJpgBtn'),
+            downloadReceiptJpgBtn: document.getElementById('downloadReceiptJpgBtn'),
+            downloadPdfBtn: document.getElementById('downloadPdfBtn'),
+            downloadLogPdfBtn: document.getElementById('downloadLogPdfBtn'),
+            downloadLogJpgBtn: document.getElementById('downloadLogJpgBtn')
+        };
 
-        // --- PASSWORD LOGIC IS HERE ---
         function handleLogin(e) {
             e.preventDefault();
-            const password = e.target.password.value;
-            // --- CHANGE YOUR PASSWORD ON THE NEXT LINE ---
-            const CORRECT_PASSWORD = "1234"; 
-
-            if (password === CORRECT_PASSWORD) {
-                loginOverlay.style.display = 'none';
-                dashboardContent.classList.remove('hidden');
+            if (e.target.password.value === CORRECT_PASSWORD) {
+                ui.loginOverlay.style.display = 'none';
+                ui.dashboardContent.classList.remove('hidden');
                 initializeFirebase();
             } else {
-                errorMessage.classList.remove('hidden');
+                ui.errorMessage.classList.remove('hidden');
                 e.target.password.value = '';
             }
         }
@@ -305,144 +306,166 @@
                 setupListeners();
             } catch (error) {
                 console.error("Firebase Init Error:", error);
-                attendeeListEl.innerHTML = `<p class="p-10 text-center text-red-400 font-semibold">Error: Could not connect to the database. Check Firebase rules.</p>`;
+                ui.attendeeListEl.innerHTML = `<p class="p-10 text-center text-red-400 font-semibold">Error: Could not connect to the database.</p>`;
             }
         }
 
         function setupListeners() {
-            const qOnline = query(collection(db, 'attendees'), orderBy('registeredAt', 'desc'));
-            onSnapshot(qOnline, (snapshot) => {
-                onlineAttendees = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), paymentType: 'Online' }));
+            onSnapshot(query(collection(db, 'pending_registrations'), orderBy('registeredAt', 'desc')), (snapshot) => {
+                pendingAttendees = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), status: 'Pending' }));
                 combineAndRender();
-            }, (error) => console.error("Error fetching online attendees:", error));
-
-            const qCash = query(collection(db, 'attendees_cash'), orderBy('registeredAt', 'desc'));
-            onSnapshot(qCash, (snapshot) => {
-                cashAttendees = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), paymentType: 'Cash' }));
+            });
+            onSnapshot(query(collection(db, 'approved_registrations'), orderBy('registeredAt', 'desc')), (snapshot) => {
+                approvedAttendees = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), status: 'Approved' }));
                 combineAndRender();
-            }, (error) => console.error("Error fetching cash attendees:", error));
+            });
         }
 
         function combineAndRender() {
-            allAttendees = [...onlineAttendees, ...cashAttendees].sort((a, b) => (b.registeredAt?.toDate() || 0) - (a.registeredAt?.toDate() || 0));
+            allAttendees = [...pendingAttendees, ...approvedAttendees].sort((a, b) => (b.registeredAt?.toDate() || 0) - (a.registeredAt?.toDate() || 0));
             updateDashboard();
         }
 
         function updateDashboard() {
-            loadingMessageEl.style.display = 'none';
-            totalRegistrationsEl.textContent = allAttendees.length;
-
+            // BUG FIX: Check if the loading message element exists before trying to hide it.
+            if (ui.loadingMessage) {
+                ui.loadingMessage.style.display = 'none';
+            }
+            ui.totalRegistrationsEl.textContent = pendingAttendees.length;
+            ui.approvedRegistrationsEl.textContent = approvedAttendees.length;
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-            const todayRegistrations = allAttendees.filter(a => a.registeredAt && a.registeredAt.toDate() >= today);
-            todayRegistrationsEl.textContent = todayRegistrations.length;
-
-            let baseList = [];
-            if (viewFilter === 'all') {
-                baseList = allAttendees;
-            } else if (viewFilter === 'online') {
-                baseList = onlineAttendees;
-            } else {
-                baseList = cashAttendees;
-            }
-
-            let attendeesToRender = baseList;
-            const viewTitleMap = {all: 'All Attendees', online: 'Online Payments', cash: 'Cash Payments'};
-            if (dateFilter === 'today') {
-                attendeesToRender = baseList.filter(a => a.registeredAt && a.registeredAt.toDate() >= today);
-                attendeeListTitle.textContent = `Today's Registrations (${viewTitleMap[viewFilter]})`;
-            } else {
-                 attendeeListTitle.textContent = viewTitleMap[viewFilter];
-            }
-
-            renderAttendeeList(attendeesToRender);
+            ui.todayRegistrationsEl.textContent = allAttendees.filter(a => a.registeredAt && a.registeredAt.toDate() >= today).length;
+            renderAttendeeList(allAttendees);
         }
 
         function renderAttendeeList(attendees) {
-            if (attendees.length === 0) {
-                attendeeListEl.innerHTML = `<p class="p-10 text-center text-text-secondary">No attendees match the current filter.</p>`;
-                return;
+            const listEl = ui.attendeeListEl;
+            listEl.innerHTML = ''; 
+
+            if (attendees.length === 0 && ui.loadingMessage) {
+                ui.loadingMessage.style.display = 'block';
+                ui.loadingMessage.textContent = 'No attendees found.';
+            } else if (ui.loadingMessage) {
+                ui.loadingMessage.style.display = 'none';
             }
-            attendeeListEl.innerHTML = ''; 
+
+
             attendees.forEach(attendee => {
                 const regDate = attendee.registeredAt ? attendee.registeredAt.toDate().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : 'N/A';
-                const attendeeDiv = document.createElement('div');
-                attendeeDiv.className = "px-4 py-4 sm:px-6 flex justify-between items-center border-b border-slate-800 last:border-b-0 hover:bg-bg-dark/50 transition-colors cursor-pointer";
-                attendeeDiv.innerHTML = `
+                const statusColor = attendee.status === 'Approved' ? 'bg-green-400/20 text-green-300' : 'bg-orange-400/20 text-orange-300';
+                const div = document.createElement('div');
+                div.className = "px-4 py-4 sm:px-6 flex justify-between items-center border-b border-slate-800 last:border-b-0 hover:bg-bg-dark/50 transition-colors cursor-pointer";
+                div.innerHTML = `
                     <div class="flex-1 min-w-0 pr-4">
                         <p class="font-semibold truncate text-text-primary">${attendee.name ?? 'N/A'}</p>
-                        <p class="text-sm truncate text-text-secondary">${attendee.email ?? 'N/A'}</p>
-                        <p class="text-xs text-slate-500 truncate" title="${attendee.id}">Ticket ID: ${attendee.id}</p>
+                        <p class="text-sm truncate text-text-secondary">${attendee.email ?? 'No Email'}</p>
                     </div>
                     <div class="text-right flex-shrink-0">
-                        <p class="px-3 py-1 text-xs font-medium rounded-full ${attendee.paymentType === 'Cash' ? 'bg-green-400/20 text-green-300' : 'bg-blue-400/20 text-blue-300'}">${attendee.paymentType ?? 'N/A'}</p>
+                        <p class="px-3 py-1 text-xs font-medium rounded-full ${statusColor}">${attendee.status ?? 'N/A'}</p>
                         <p class="mt-2 text-xs text-slate-500">${regDate}</p>
                     </div>`;
-                attendeeDiv.addEventListener('click', () => showAttendeeDetails(attendee));
-                attendeeListEl.appendChild(attendeeDiv);
+                div.addEventListener('click', () => showAttendeeDetails(attendee));
+                listEl.appendChild(div);
             });
         }
         
         function generateQrCode(attendeeData) {
-            const canvasElement = document.getElementById('modalQrCodeCanvas');
             new QRious({
-                element: canvasElement,
-                value: JSON.stringify({ id: attendeeData.id, name: attendeeData.name, email: attendeeData.email }),
-                size: 112, /* This is the internal resolution, actual display size from CSS */
+                element: document.getElementById('modalQrCodeCanvas'),
+                value: JSON.stringify({ id: attendeeData.id, name: attendeeData.name }),
+                size: 200,
+                padding: 5,
                 level: 'H',
-                padding: 0, /* No internal padding from QRious */
-                background: 'transparent', /* Let CSS handle the background */
-                foreground: 'black'
+                foreground: 'black',
+                background: 'white',
             });
         }
         
-        function showAttendeeDetails(attendeeData) {
-            currentAttendee = attendeeData;
-            const isCash = attendeeData.paymentType === 'Cash';
-            const ticketType = isCash ? 'Freshers Pass (Cash)' : (attendeeData.ticketTypeFullText || 'Freshers Pass (₹799)');
-            const amount = 79900; 
-
-            document.getElementById('modalTicketName').textContent = attendeeData.name ?? 'N/A';
-            document.getElementById('modalTicketTypeDetail').textContent = ticketType;
-            document.getElementById('modalTicketIdStub').textContent = `ID: ${(attendeeData.id ?? '--------').substring(0, 8).toUpperCase()}`;
+        function showAttendeeDetails(attendee) {
+            currentAttendee = attendee;
+            const ticketType = attendee.ticketType || 'Student';
+            const price = TICKET_PRICES[ticketType] || 850;
             
-            generateQrCode(attendeeData);
+            document.getElementById('modalTicketName').textContent = attendee.name ?? 'N/A';
+            document.getElementById('modalTicketTypeDetail').textContent = `Freshers Pass (${ticketType})`;
+            document.getElementById('modalTicketIdStub').textContent = `ID: ${(attendee.id ?? '--------').substring(0, 8).toUpperCase()}`;
+            generateQrCode(attendee);
             
-            document.getElementById('modalReceiptDate').textContent = attendeeData.registeredAt ? attendeeData.registeredAt.toDate().toLocaleDateString('en-IN', {dateStyle: 'long'}) : 'N/A';
-            document.getElementById('modalReceiptName').textContent = attendeeData.name ?? 'N/A';
-            document.getElementById('modalReceiptEmail').textContent = attendeeData.email ?? 'N/A';
-            document.getElementById('modalReceiptPaymentId').textContent = attendeeData.paymentId ?? 'CASH';
-            
-            const payerUpiWrapper = document.getElementById('payerUpiWrapper');
-            const modalReceiptPayerUpi = document.getElementById('modalReceiptPayerUpi');
-            if (attendeeData.payerUpi) {
-                modalReceiptPayerUpi.textContent = attendeeData.payerUpi;
-                payerUpiWrapper.classList.remove('hidden');
-            } else {
-                payerUpiWrapper.classList.add('hidden');
-            }
-
-            document.getElementById('modalReceiptDescription').textContent = `Ticket: ${ticketType}`;
-            const amountInRupees = `₹${(amount / 100).toFixed(2)}`;
+            document.getElementById('modalReceiptDate').textContent = attendee.registeredAt ? attendee.registeredAt.toDate().toLocaleDateString('en-IN', {dateStyle: 'long'}) : 'N/A';
+            document.getElementById('modalReceiptName').textContent = attendee.name ?? 'N/A';
+            document.getElementById('modalReceiptEmail').textContent = attendee.email ?? 'N/A';
+            document.getElementById('modalReceiptDescription').textContent = `Ticket: Freshers Pass (${ticketType})`;
+            const amountInRupees = `₹${price.toFixed(2)}`;
             document.getElementById('modalReceiptAmount').textContent = amountInRupees;
             document.getElementById('modalReceiptTotal').textContent = amountInRupees;
 
-            attendeeModalEl.classList.remove('hidden');
+            const approvalSection = document.getElementById('approval-section');
+            approvalSection.innerHTML = attendee.status === 'Pending'
+                ? `<button id="approveBtn" class="w-full px-4 py-3 font-bold text-black transition rounded-lg bg-green-500 hover:bg-green-600">Approve & Finalize Ticket</button>`
+                : `<div class="w-full px-4 py-3 font-bold text-center text-green-300 border-2 border-green-500 rounded-lg">STATUS: APPROVED</div>`;
+            
+            if (attendee.status === 'Pending') {
+                document.getElementById('approveBtn').onclick = () => approveAttendee(attendee);
+            }
+            ui.attendeeModalEl.classList.remove('hidden');
+        }
+
+        async function handleManualEntry(e) {
+            e.preventDefault();
+            const form = e.target;
+            const newAttendee = {
+                name: form.name.value, email: form.email.value || null, mobile: form.mobile.value || null,
+                ticketType: form.ticketType.value, paymentType: form.paymentType.value,
+                registeredAt: serverTimestamp(),
+            };
+            try {
+                const docRef = await addDoc(collection(db, 'approved_registrations'), newAttendee);
+                form.reset();
+                showAttendeeDetails({ ...newAttendee, id: docRef.id, status: 'Approved', registeredAt: { toDate: () => new Date() } });
+            } catch (error) {
+                console.error("Error adding manual entry:", error);
+                alert("Failed to add attendee.");
+            }
+        }
+        
+        async function approveAttendee(attendee) {
+            if (!attendee || attendee.status !== 'Pending') return;
+            const approveBtn = document.getElementById('approveBtn');
+            approveBtn.disabled = true;
+            approveBtn.textContent = 'Approving...';
+
+            const approvedData = {
+                name: attendee.name,
+                email: attendee.email || null,
+                mobile: attendee.mobile || null,
+                ticketType: attendee.ticketType || 'Student',
+                paymentType: attendee.paymentType || 'Online',
+                registeredAt: attendee.registeredAt 
+            };
+
+            try {
+                await addDoc(collection(db, 'approved_registrations'), approvedData);
+                await deleteDoc(doc(db, 'pending_registrations', attendee.id));
+                ui.closeModalBtn.click();
+            } catch (error) {
+                console.error("Error approving attendee:", error);
+                alert("Failed to approve attendee. The data was not moved. Please check the console for errors.");
+                approveBtn.disabled = false;
+                approveBtn.textContent = 'Approve & Finalize Ticket';
+            }
         }
 
         async function downloadElementAsJpg(elementId, fileName) {
             const element = document.getElementById(elementId);
             try {
-                const bgColor = elementId === 'ticket-to-download' ? '#1F2937' : '#ffffff';
+                const bgColor = elementId === 'ticket-to-download' ? '#111A15' : '#ffffff';
                 const canvas = await html2canvas(element, { scale: 3, backgroundColor: bgColor, useCORS: true });
                 const link = document.createElement('a');
                 link.download = fileName;
                 link.href = canvas.toDataURL('image/jpeg', 0.9);
                 link.click();
-            } catch (error) {
-                console.error(`Error generating JPG:`, error);
-                alert(`Failed to generate ${fileName}.`);
-            }
+            } catch (error) { console.error(`Error generating JPG:`, error); }
         }
         
         async function downloadCombinedPdf() {
@@ -450,33 +473,40 @@
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
             try {
-                const ticketCanvas = await html2canvas(document.getElementById('ticket-to-download'), { scale: 3, backgroundColor: '#1F2937', useCORS: true });
+                const ticketCanvas = await html2canvas(document.getElementById('ticket-to-download'), { scale: 3, backgroundColor: '#111A15', useCORS: true });
                 const receiptCanvas = await html2canvas(document.getElementById('receipt-to-download'), { scale: 3, backgroundColor: '#ffffff', useCORS: true });
+                
                 const pdfWidth = pdf.internal.pageSize.getWidth();
+
                 const ticketImgProps = pdf.getImageProperties(ticketCanvas);
-                const ticketPdfHeight = (ticketImgProps.height * pdfWidth) / ticketImgProps.width;
+                const ticketPdfHeight = (ticketImgProps.height * (pdfWidth - 20)) / ticketImgProps.width;
                 pdf.addImage(ticketCanvas.toDataURL('image/png'), 'PNG', 10, 10, pdfWidth - 20, ticketPdfHeight);
-                pdf.addPage();
+                
                 const receiptImgProps = pdf.getImageProperties(receiptCanvas);
-                const receiptPdfHeight = (receiptImgProps.height * pdfWidth) / receiptImgProps.width;
-                pdf.addImage(receiptCanvas.toDataURL('image/png'), 'PNG', 10, 10, pdfWidth - 20, receiptPdfHeight);
+                const receiptPdfHeight = (receiptImgProps.height * (pdfWidth - 20)) / receiptImgProps.width;
+                
+                if (10 + ticketPdfHeight + 10 + receiptPdfHeight < pdf.internal.pageSize.getHeight()) {
+                    pdf.addImage(receiptCanvas.toDataURL('image/png'), 'PNG', 10, 10 + ticketPdfHeight + 10, pdfWidth - 20, receiptPdfHeight);
+                } else {
+                    pdf.addPage();
+                    pdf.addImage(receiptCanvas.toDataURL('image/png'), 'PNG', 10, 10, pdfWidth - 20, receiptPdfHeight);
+                }
+                
                 pdf.save(`IGNITE-2025-Combined-${(currentAttendee.name ?? 'Attendee').replace(/\s+/g, '-')}.pdf`);
-            } catch (error) {
-                console.error("PDF Generation Error:", error);
-            }
+            } catch (error) { console.error("PDF Generation Error:", error); }
         }
 
         async function downloadLogAsJpg(attendeesToExport, filename) {
-            if (attendeesToExport.length === 0) return alert("No attendees to export for this view.");
+            if (attendeesToExport.length === 0) return alert("No attendees to export.");
+            
             const table = document.createElement('table');
             table.className = 'w-full text-sm text-left';
             table.innerHTML = `
                 <thead style="color: var(--text-secondary); background-color: var(--bg-light);">
                     <tr>
                         <th style="padding: 12px 24px;">Name</th>
-                        <th style="padding: 12px 24px;">Ticket ID</th>
-                        <th style="padding: 12px 24px;">Payment</th>
-                        <th style="padding: 12px 24px;">Payer UPI</th>
+                        <th style="padding: 12px 24px;">Status</th>
+                        <th style="padding: 12px 24px;">Ticket Type</th>
                         <th style="padding: 12px 24px;">Registered At</th>
                     </tr>
                 </thead>
@@ -484,9 +514,8 @@
                     ${attendeesToExport.map(attendee => `
                         <tr style="border-bottom: 1px solid #374151;">
                             <td style="padding: 16px 24px; color: var(--text-primary);">${attendee.name ?? 'N/A'}</td>
-                            <td style="padding: 16px 24px;">${attendee.id ?? 'N/A'}</td>
-                            <td style="padding: 16px 24px;">${attendee.paymentType ?? 'N/A'}</td>
-                            <td style="padding: 16px 24px;">${attendee.payerUpi ?? 'N/A'}</td>
+                            <td style="padding: 16px 24px;">${attendee.status ?? 'N/A'}</td>
+                            <td style="padding: 16px 24px;">${attendee.ticketType ?? 'N/A'}</td>
                             <td style="padding: 16px 24px;">${attendee.registeredAt ? attendee.registeredAt.toDate().toLocaleString('en-IN') : 'N/A'}</td>
                         </tr>
                     `).join('')}
@@ -496,7 +525,7 @@
             container.style.cssText = `position: absolute; left: -9999px; padding: 20px; background-color: var(--bg-dark); font-family: 'Inter', sans-serif; color: var(--text-secondary);`;
             const title = document.createElement('h1');
             title.style.cssText = `margin-bottom: 16px; font-size: 24px; font-weight: bold; color: var(--text-primary);`;
-            title.textContent = `IGNITE 2025 - ${attendeeListTitle.textContent}`;
+            title.textContent = 'IGNITE 2025 - Full Attendee Log';
             container.appendChild(title);
             container.appendChild(table);
             document.body.appendChild(container);
@@ -509,44 +538,40 @@
                 link.click();
             } catch(e) {
                 console.error("JPG log generation failed", e);
+                alert("Failed to generate JPG report.");
             } finally {
                 document.body.removeChild(container);
             }
         }
 
         function downloadLogAsPdf(attendeesToExport, filename) {
-            if (attendeesToExport.length === 0) return alert("No attendees to export for this view.");
+            if (attendeesToExport.length === 0) return alert("No attendees to export.");
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
-            doc.text(`IGNITE 2025 - ${attendeeListTitle.textContent}`, 14, 16);
-            const tableColumn = ["Name", "Email", "Mobile", "Payment", "Ticket ID", "Payer UPI", "Registered At"];
-            const tableRows = attendeesToExport.map(a => [a.name, a.email, a.mobile, a.paymentType, a.id, a.payerUpi ?? 'N/A', a.registeredAt ? a.registeredAt.toDate().toLocaleString('en-IN') : 'N/A']);
+            
+            doc.text(`IGNITE 2025 - Full Attendee Log`, 14, 16);
+            const tableColumn = ["Name", "Email", "Mobile", "Status", "Ticket Type", "Registered At"];
+            const tableRows = attendeesToExport.map(a => [
+                a.name ?? 'N/A', 
+                a.email ?? 'N/A', 
+                a.mobile ?? 'N/A', 
+                a.status ?? 'N/A',
+                a.ticketType ?? 'N/A', 
+                a.registeredAt ? a.registeredAt.toDate().toLocaleString('en-IN') : 'N/A'
+            ]);
+            
             doc.autoTable({ head: [tableColumn], body: tableRows, startY: 20 });
             doc.save(filename);
         }
 
-        // --- Event Listeners ---
-        loginForm.addEventListener('submit', handleLogin);
-        closeModalBtn.addEventListener('click', () => attendeeModalEl.classList.add('hidden'));
-        totalRegistrationsCard.addEventListener('click', () => { dateFilter = 'all'; totalRegistrationsCard.classList.add('stat-card-active'); todayRegistrationsCard.classList.remove('stat-card-active'); updateDashboard(); });
-        todayRegistrationsCard.addEventListener('click', () => { dateFilter = 'today'; totalRegistrationsCard.classList.remove('stat-card-active'); todayRegistrationsCard.classList.add('stat-card-active'); updateDashboard(); });
-        filterAllBtn.addEventListener('click', () => { viewFilter = 'all'; filterAllBtn.classList.add('filter-btn-active'); filterOnlineBtn.classList.remove('filter-btn-active'); filterCashBtn.classList.remove('filter-btn-active'); updateDashboard(); });
-        filterOnlineBtn.addEventListener('click', () => { viewFilter = 'online'; filterAllBtn.classList.remove('filter-btn-active'); filterOnlineBtn.classList.add('filter-btn-active'); filterCashBtn.classList.remove('filter-btn-active'); updateDashboard(); });
-        filterCashBtn.addEventListener('click', () => { viewFilter = 'cash'; filterAllBtn.classList.remove('filter-btn-active'); filterOnlineBtn.classList.remove('filter-btn-active'); filterCashBtn.classList.add('filter-btn-active'); updateDashboard(); });
-        downloadTicketJpgBtn.addEventListener('click', () => currentAttendee && downloadElementAsJpg('ticket-to-download', `IGNITE-Ticket-${(currentAttendee.name ?? '').replace(/\s+/g, '-')}.jpg`));
-        downloadReceiptJpgBtn.addEventListener('click', () => currentAttendee && downloadElementAsJpg('receipt-to-download', `IGNITE-Receipt-${(currentAttendee.name ?? '').replace(/\s+/g, '-')}.jpg`));
-        downloadPdfBtn.addEventListener('click', downloadCombinedPdf);
-        function getFilteredDataForExport() {
-            let baseList = (viewFilter === 'online') ? onlineAttendees : (viewFilter === 'cash') ? cashAttendees : allAttendees;
-            if (dateFilter === 'today') {
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                return baseList.filter(a => a.registeredAt && a.registeredAt.toDate() >= today);
-            }
-            return baseList;
-        }
-        downloadLogPdfBtn.addEventListener('click', () => downloadLogAsPdf(getFilteredDataForExport(), `ignite-2025-log.pdf`));
-        downloadLogJpgBtn.addEventListener('click', () => downloadLogAsJpg(getFilteredDataForExport(), `ignite-2025-log.jpg`));
+        ui.loginForm.addEventListener('submit', handleLogin);
+        ui.manualEntryForm.addEventListener('submit', handleManualEntry);
+        ui.closeModalBtn.addEventListener('click', () => ui.attendeeModalEl.classList.add('hidden'));
+        ui.downloadTicketJpgBtn.addEventListener('click', () => currentAttendee && downloadElementAsJpg('ticket-to-download', `IGNITE-Ticket-${(currentAttendee.name ?? '').replace(/\s+/g, '-')}.jpg`));
+        ui.downloadReceiptJpgBtn.addEventListener('click', () => currentAttendee && downloadElementAsJpg('receipt-to-download', `IGNITE-Receipt-${(currentAttendee.name ?? '').replace(/\s+/g, '-')}.jpg`));
+        ui.downloadPdfBtn.addEventListener('click', downloadCombinedPdf);
+        ui.downloadLogPdfBtn.addEventListener('click', () => downloadLogAsPdf(allAttendees, 'ignite-2025-full-log.pdf'));
+        ui.downloadLogJpgBtn.addEventListener('click', () => downloadLogAsJpg(allAttendees, 'ignite-2025-full-log.jpg'));
     </script>
 
 </body>
