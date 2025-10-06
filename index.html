@@ -156,7 +156,7 @@
                          <input name="mobile" type="tel" class="md:col-span-1 w-full px-4 py-2 text-white bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-green)]" placeholder="Mobile (Optional)">
                          <select name="ticketType" class="w-full px-4 py-2 text-white bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-green)]">
                              <option value="Student">Student Pass (₹750)</option>
-                             <option value="Outsider">Outsider Pass (₹850)</option>
+                             <option value="Outsider">Outsider Pass (₹800)</option>
                          </select>
                          <select name="paymentType" class="w-full px-4 py-2 text-white bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-green)]">
                               <option value="Cash">Cash Payment</option>
@@ -260,7 +260,7 @@
             appId: "1:480552824914:web:d67e8c9f208c67ac7fef8b",
             measurementId: "G-RLPWDK8MR2"
         };
-        const TICKET_PRICES = { 'Student': 800, 'Outsider': 850 };
+        const TICKET_PRICES = { 'Student': 750, 'Outsider': 800 };
         const CORRECT_PASSWORD = "1234"; 
         
         let db, currentAttendee = null;
@@ -385,7 +385,7 @@
         function showAttendeeDetails(attendee) {
             currentAttendee = attendee;
             const ticketType = attendee.ticketType || 'Student';
-            const price = TICKET_PRICES[ticketType] || 800;
+            const price = TICKET_PRICES[ticketType] || 750;
             
             document.getElementById('modalTicketName').textContent = attendee.name ?? 'N/A';
             document.getElementById('modalTicketTypeDetail').textContent = `Freshers Pass (${ticketType})`;
@@ -576,4 +576,3 @@
 
 </body>
 </html>
-
