@@ -16,7 +16,7 @@
 </div>
 
 <!-- === FIXED PLACEHOLDER LINK === -->
-![IGNITE 2025 Admin Screenshot](https://i.postimg.cc/fbnY5qGK/image.png)
+![IGNITE 2025 Admin Screenshot](https://i.postimg.cc/28f3Lytk/Picsart-25-10-26-19-55-55-910.png)
 
 ---
 
