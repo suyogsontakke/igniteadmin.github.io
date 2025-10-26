@@ -10,7 +10,7 @@
     <a href="https://github.com/suyogsontakke/ignite-2025-admin/stargazers"><img src="https://img.shields.io/github/stars/suyogsontakke/ignite-2025-admin?style=flat-square" alt="Stars"/></a>
     <a href="https://github.com/suyogsontakke/ignite-2025-admin/forks"><img src="https://img.shields.io/github/forks/suyogsontakke/ignite-2025-admin?style=flat-square" alt="Fork"/></a>
     <a href="https://github.com/suyogsontakke/ignite-2025-admin/blob/main/LICENSE"><img src="https://img.shields.io/github/license/suyogsontakke/ignite-2025-admin?style=flat-square&color=blue" alt="License"/></a>
-    <img src="https://img.shields.io/github/languages/top/suyogsontakke/ignite-2025-website?style=flat-square&logo=html5&logoColor=white&color=E34F26" alt="Top Language: HTML"/>
+    <img src="https://img.shields.io/github/languages/top/suyogsontakke/ignite-2025-admin?style=flat-square&logo=html5&logoColor=white&color=E34F26" alt="Top Language: HTML"/>
     <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square" alt="PRs welcome"/>
   </p>
 </div>
