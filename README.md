@@ -6,16 +6,16 @@
   </p>
   
   <p>
-    <a href="https://github.com/[YOUR_USERNAME]/[YOUR_ADMIN_REPO_NAME]/releases"><img src="https://img.shields.io/github/v/release/[YOUR_USERNAME]/[YOUR_ADMIN_REPO_NAME]?label=Latest%20release&style=flat-square" alt="Latest release"/></a>
-    <a href="https://github.com/[YOUR_USERNAME]/[YOUR_ADMIN_REPO_NAME]/stargazers"><img src="https://img.shields.io/github/stars/[YOUR_USERNAME]/[YOUR_ADMIN_REPO_NAME]?style=flat-square" alt="Stars"/></a>
-    <a href="https://github.com/[YOUR_USERNAME]/[YOUR_ADMIN_REPO_NAME]/forks"><img src="https://img.shields.io/github/forks/[YOUR_USERNAME]/[YOUR_ADMIN_REPO_NAME]?style=flat-square" alt="Fork"/></a>
-    <a href="https://github.com/[YOUR_USERNAME]/[YOUR_ADMIN_REPO_NAME]/blob/main/LICENSE"><img src="https://img.shields.io/github/license/[YOUR_USERNAME]/[YOUR_ADMIN_REPO_NAME]?style=flat-square&color=blue" alt="License"/></a>
-    <img src="https://img.shields.io/github/languages/top/[YOUR_USERNAME]/[YOUR_ADMIN_REPO_NAME]?style=flat-square&logo=html5&logoColor=white&color=E34F26" alt="Top Language: HTML"/>
+    <a href="https://github.com/suyogsontakke/ignite-2025-admin/releases"><img src="https://img.shields.io/github/v/release/suyogsontakke/ignite-2025-admin?label=Latest%20release&style=flat-square" alt="Latest release"/></a>
+    <a href="https://github.com/suyogsontakke/ignite-2025-admin/stargazers"><img src="https://img.shields.io/github/stars/suyogsontakke/ignite-2025-admin?style=flat-square" alt="Stars"/></a>
+    <a href="https://github.com/suyogsontakke/ignite-2025-admin/forks"><img src="https://img.shields.io/github/forks/suyogsontakke/ignite-2025-admin?style=flat-square" alt="Fork"/></a>
+    <a href="https://github.com/suyogsontakke/ignite-2025-admin/blob/main/LICENSE"><img src="https://img.shields.io/github/license/suyogsontakke/ignite-2025-admin?style=flat-square&color=blue" alt="License"/></a>
+    <img src="https://img.shields.io/github/languages/top/suyogsontakke/ignite-2025-website?style=flat-square&logo=html5&logoColor=white&color=E34F26" alt="Top Language: HTML"/>
     <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square" alt="PRs welcome"/>
   </p>
 </div>
 
-![IGNITE 2025 Admin Screenshot](https://placehold.co/800x400/111A15/16FF00?text=Your+Admin+Panel+Screenshot+Here)
+![IGNITE 2025 Admin Screenshot](https://ibb.co/4gDTBS98)
 
 ---
 
@@ -112,8 +112,8 @@ To get this admin panel running locally.
 1.  **Clone the Repo**
     *(Replace with your actual GitHub username and repo name)*
     ```bash
-    git clone [https://github.com/](https://github.com/)[YOUR_USERNAME]/[YOUR_ADMIN_REPO_NAME].git
-    cd [YOUR_ADMIN_REPO_NAME]
+    git clone https://github.com/)suyogsontakke/ignite-2025-admin.git
+    cd ignite-2025-admin
     ```
 
 2.  **Configure Firestore Rules**
