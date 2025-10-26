@@ -15,7 +15,8 @@
   </p>
 </div>
 
-![IGNITE 2025 Admin Screenshot](https://ibb.co/4gDTBS98)
+<!-- === FIXED PLACEHOLDER LINK === -->
+![IGNITE 2025 Admin Screenshot](https://i.postimg.cc/fbnY5qGK/image.png)
 
 ---
 
@@ -110,9 +111,9 @@ To get this admin panel running locally.
 ### ⚙️ Installation & Setup
 
 1.  **Clone the Repo**
-    *(Replace with your actual GitHub username and repo name)*
+    *(Replace with your actual GitHub username and repo name if different)*
     ```bash
-    git clone https://github.com/)suyogsontakke/ignite-2025-admin.git
+    git clone [https://github.com/suyogsontakke/ignite-2025-admin.git](https://github.com/suyogsontakke/ignite-2025-admin.git)
     cd ignite-2025-admin
     ```
 
@@ -167,21 +168,3 @@ Deploy this static HTML file similarly to the public booking site. However, ensu
 ```bash
 # Example Firebase Deployment
 firebase deploy --only hosting
-```
-
-🤝 Contributing
-
-Contributions are welcome! Please follow standard fork-and-pull-request workflow.
-
-1. Fork the Project
-
-2. Create your Feature Branch (git checkout -b feature/AmazingAdminFeature)
-
-3. Commit your Changes (git commit -m 'Add some AmazingAdminFeature')
-
-4. Push to the Branch (git push origin feature/AmazingAdminFeature)
-
-5. Open a Pull Request
-
-📄 License
-Distributed under the MIT License. See LICENSE file for more information.
