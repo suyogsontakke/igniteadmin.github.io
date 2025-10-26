@@ -168,3 +168,34 @@ Deploy this static HTML file similarly to the public booking site. However, ensu
 ```bash
 # Example Firebase Deployment
 firebase deploy --only hosting
+```
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow standard fork-and-pull-request workflow.
+
+1. Fork the Project
+
+2. Create your Feature Branch (git checkout -b feature/AmazingAdminFeature)
+
+3. Commit your Changes (git commit -m 'Add some AmazingAdminFeature')
+
+4. Push to the Branch (git push origin feature/AmazingAdminFeature)
+
+5. Open a Pull Request
+
+## 📄 License
+
+Distributed under the MIT License. See LICENSE file for more information.
+
+## 💎 Acknowledgements
+
+● Firebase
+
+● Tailwind CSS
+
+● jsPDF & jsPDF-AutoTable
+
+● html2canvas
+
+● qrious
