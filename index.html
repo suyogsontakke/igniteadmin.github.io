@@ -225,16 +225,16 @@
                 </div>
                 
                 <div id="receipt-to-download" class="receipt-container rounded-lg">
-                     <div class="flex items-center justify-between pb-4 mb-4 border-b border-gray-200"><h2 class="text-2xl font-bold text-gray-800">Payment Receipt</h2><span class="text-sm text-gray-500" id="modalReceiptDate"></span></div>
-                     <div>
-                         <div><p class="text-sm text-gray-500">Billed To:</p><p class="font-semibold" id="modalReceiptName"></p><p class="text-sm" id="modalReceiptEmail"></p></div>
-                         <table class="w-full my-4 text-left">
-                             <thead><tr class="border-b border-gray-200"><th class="py-2 font-semibold">Description</th><th class="py-2 font-semibold text-right">Amount</th></tr></thead>
-                             <tbody><tr><td class="py-2" id="modalReceiptDescription"></td><td class="py-2 text-right" id="modalReceiptAmount"></td></tr></tbody>
-                             <tfoot><tr class="font-bold border-t-2 border-gray-800"><td class="py-2">Total Paid</td><td class="py-2 text-right" id="modalReceiptTotal"></td></tr></tfoot>
-                         </table>
-                         <div class="pt-4 text-center"><p class="inline-block p-2 text-2xl font-bold text-green-600 border-4 border-green-600 rounded-lg -rotate-12">PAID</p></div>
-                     </div>
+                       <div class="flex items-center justify-between pb-4 mb-4 border-b border-gray-200"><h2 class="text-2xl font-bold text-gray-800">Payment Receipt</h2><span class="text-sm text-gray-500" id="modalReceiptDate"></span></div>
+                       <div>
+                           <div><p class="text-sm text-gray-500">Billed To:</p><p class="font-semibold" id="modalReceiptName"></p><p class="text-sm" id="modalReceiptEmail"></p></div>
+                           <table class="w-full my-4 text-left">
+                               <thead><tr class="border-b border-gray-200"><th class="py-2 font-semibold">Description</th><th class="py-2 font-semibold text-right">Amount</th></tr></thead>
+                               <tbody><tr><td class="py-2" id="modalReceiptDescription"></td><td class="py-2 text-right" id="modalReceiptAmount"></td></tr></tbody>
+                               <tfoot><tr class="font-bold border-t-2 border-gray-800"><td class="py-2">Total Paid</td><td class="py-2 text-right" id="modalReceiptTotal"></td></tr></tfoot>
+                           </table>
+                           <div class="pt-4 text-center"><p class="inline-block p-2 text-2xl font-bold text-green-600 border-4 border-green-600 rounded-lg -rotate-12">PAID</p></div>
+                       </div>
                 </div>
                 
                  <div id="approval-section" class="mt-4 max-w-sm mx-auto"></div>
@@ -250,7 +250,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        // --- CHANGED: Now imports real email/password sign-in ---
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, onSnapshot, query, orderBy, addDoc, serverTimestamp, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -263,9 +264,14 @@
             measurementId: "G-RLPWDK8MR2"
         };
         const TICKET_PRICES = { 'Student': 750, 'Outsider': 800 };
-        const CORRECT_PASSWORD = "1234"; 
+        // --- DELETED: Insecure client-side password ---
         
-        let db, currentAttendee = null;
+        // --- CHANGED: Firebase is initialized first ---
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        
+        let currentAttendee = null;
         let pendingAttendees = [], approvedAttendees = [], allAttendees = [];
 
         const ui = {
@@ -288,38 +294,63 @@
             downloadLogJpgBtn: document.getElementById('downloadLogJpgBtn')
         };
 
-        function handleLogin(e) {
+        // --- REPLACED: This is the new, secure login function ---
+        async function handleLogin(e) {
             e.preventDefault();
-            if (e.target.password.value === CORRECT_PASSWORD) {
+            ui.errorMessage.classList.add('hidden');
+            
+            // -----------------------------------------------------------------
+            // --- !!! IMPORTANT !!! ---
+            // --- SET THIS TO THE ADMIN EMAIL YOU CREATED IN FIREBASE AUTH ---
+            const email = "suyogop12@gmail.com"; 
+            // -----------------------------------------------------------------
+            
+            const password = e.target.password.value;
+
+            try {
+                // Try to sign in with the real Firebase account
+                await signInWithEmailAndPassword(auth, email, password);
+                
+                // On success:
                 ui.loginOverlay.style.display = 'none';
                 ui.dashboardContent.classList.remove('hidden');
-                initializeFirebase();
-            } else {
+                
+                // Now that we are logged in as admin, start fetching data
+                setupListeners(); 
+                
+            } catch (error) {
+                // On failure:
+                console.error("Admin Login Error:", error.code);
+                if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') {
+                    ui.errorMessage.textContent = "Incorrect password. Please try again.";
+                } else {
+                    ui.errorMessage.textContent = "An error occurred. Check console.";
+                }
                 ui.errorMessage.classList.remove('hidden');
                 e.target.password.value = '';
             }
         }
 
-        async function initializeFirebase() {
-            try {
-                const app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                await signInAnonymously(getAuth(app));
-                setupListeners();
-            } catch (error) {
-                console.error("Firebase Init Error:", error);
-                ui.attendeeListEl.innerHTML = `<p class="p-10 text-center text-red-400 font-semibold">Error: Could not connect to the database.</p>`;
-            }
-        }
+        // --- DELETED: Old initializeFirebase() function is no longer needed ---
 
         function setupListeners() {
+            // This now runs *after* admin login is successful
             onSnapshot(query(collection(db, 'pending_registrations'), orderBy('registeredAt', 'desc')), (snapshot) => {
                 pendingAttendees = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), status: 'Pending' }));
                 combineAndRender();
+            }, (error) => {
+                console.error("Error listening to pending_registrations:", error);
+                ui.loadingMessage.textContent = "Error: Could not read pending data. Check permissions.";
+                ui.loadingMessage.style.color = 'red';
             });
+            
             onSnapshot(query(collection(db, 'approved_registrations'), orderBy('registeredAt', 'desc')), (snapshot) => {
                 approvedAttendees = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), status: 'Approved' }));
                 combineAndRender();
+            }, (error) => {
+                console.error("Error listening to approved_registrations:", error);
+                ui.loadingMessage.textContent = "Error: Could not read approved data. Check permissions.";
+                ui.loadingMessage.style.color = 'red';
             });
         }
 
@@ -329,7 +360,6 @@
         }
 
         function updateDashboard() {
-            // BUG FIX: Check if the loading message element exists before trying to hide it.
             if (ui.loadingMessage) {
                 ui.loadingMessage.style.display = 'none';
             }
@@ -345,9 +375,11 @@
             const listEl = ui.attendeeListEl;
             listEl.innerHTML = ''; 
 
-            if (attendees.length === 0 && ui.loadingMessage) {
-                ui.loadingMessage.style.display = 'block';
-                ui.loadingMessage.textContent = 'No attendees found.';
+            if (attendees.length === 0) {
+                 if (ui.loadingMessage) {
+                    ui.loadingMessage.style.display = 'block';
+                    ui.loadingMessage.textContent = 'No attendees found.';
+                 }
             } else if (ui.loadingMessage) {
                 ui.loadingMessage.style.display = 'none';
             }
@@ -437,18 +469,23 @@
             approveBtn.disabled = true;
             approveBtn.textContent = 'Approving...';
 
+            // Create a clean data object to move, excluding the 'status' and 'id'
             const approvedData = {
                 name: attendee.name,
                 email: attendee.email || null,
                 mobile: attendee.mobile || null,
-                ticketType: attendee.ticketType || 'Student',
-                paymentType: attendee.paymentType || 'Online',
-                registeredAt: attendee.registeredAt 
+                ticketType: attendee.ticketType || 'Student', 
+                paymentType: attendee.paymentType || 'Online', // Set default paymentType
+                registeredAt: attendee.registeredAt,
+                paymentId: attendee.paymentId || null // Carry over the paymentId
             };
 
             try {
+                // 1. Add the data to the 'approved_registrations' collection
                 await addDoc(collection(db, 'approved_registrations'), approvedData);
+                // 2. Delete the original document from 'pending_registrations'
                 await deleteDoc(doc(db, 'pending_registrations', attendee.id));
+                // 3. Close the modal
                 ui.closeModalBtn.click();
             } catch (error) {
                 console.error("Error approving attendee:", error);
@@ -570,7 +607,7 @@
         ui.manualEntryForm.addEventListener('submit', handleManualEntry);
         ui.closeModalBtn.addEventListener('click', () => ui.attendeeModalEl.classList.add('hidden'));
         ui.downloadTicketJpgBtn.addEventListener('click', () => currentAttendee && downloadElementAsJpg('ticket-to-download', `IGNITE-Ticket-${(currentAttendee.name ?? '').replace(/\s+/g, '-')}.jpg`));
-        ui.downloadReceiptJpgBtn.addEventListener('click', () => currentAttendee && downloadElementAsJpg('receipt-to-download', `IGNITE-Receipt-${(currentAttendee.name ?? '').replace(/\s+/g, '-')}.jpg`));
+        ui.downloadReceiptJpgBtn.addEventListener('click', () => currentAttendee && downloadElementAsJtpg('receipt-to-download', `IGNITE-Receipt-${(currentAttendee.name ?? '').replace(/\s+/g, '-')}.jpg`));
         ui.downloadPdfBtn.addEventListener('click', downloadCombinedPdf);
         ui.downloadLogPdfBtn.addEventListener('click', () => downloadLogAsPdf(allAttendees, 'ignite-2025-full-log.pdf'));
         ui.downloadLogJpgBtn.addEventListener('click', () => downloadLogAsJpg(allAttendees, 'ignite-2025-full-log.jpg'));
